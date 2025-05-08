@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "463512816867",
+    "project_id": "susach-3f404",
+    "storage_bucket": "susach-3f404.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:463512816867:android:c9e095577c391196d389d6",
+        "android_client_info": {
+          "package_name": "com.mad.susach"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZ7VNoZ7HV1X5_ibScv9In1Opvbk9unGQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
