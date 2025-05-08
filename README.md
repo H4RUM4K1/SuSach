@@ -1,5 +1,4 @@
 # SuSach
-<<<<<<< HEAD
 App lịch sử MAD 2025
 =======
 
