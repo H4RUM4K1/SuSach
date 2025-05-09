@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mad.susach.R
 import com.mad.susach.navbar.MainBottomNavBar
+import androidx.compose.material3.MaterialTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -243,6 +244,9 @@ fun ExploreSection(
                 contentAlignment = Alignment.Center
             ) {
                 Text("Nhân vật\nlịch sử", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            MaterialTheme {
+                // TODO: Add main navigation here
+                // MainNavigation()
             }
         }
     }
@@ -262,3 +266,4 @@ fun HomeScreenPreview() {
         onNavSelected = {}
     )
 }
+
