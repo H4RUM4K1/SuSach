@@ -1,24 +1,23 @@
-package com.mad.susach.main.auth.register.viewmodel
+package com.mad.susach.auth.login.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mad.susach.main.auth.register.data.User
-import com.mad.susach.main.auth.register.repository.RegisterRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import com.mad.susach.main.auth.login.repository.LoginRepository
 
-class RegisterViewModel : ViewModel() {
-    private val repository = RegisterRepository()
+class LoginViewModel : ViewModel() {
+    private val repository = LoginRepository()
     private val _authState = MutableStateFlow<AuthState>(AuthState.Initial)
     val authState: StateFlow<AuthState> = _authState
 
-    fun register(email: String, password: String, user: User) {
+    fun login(email: String, password: String) {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            repository.register(email, password, user)
+            repository.login(email, password)
                 .onSuccess { _authState.value = AuthState.Success }
-                .onFailure { _authState.value = AuthState.Error(it.message ?: "Đăng ký thất bại") }
+                .onFailure { _authState.value = AuthState.Error(it.message ?: "Đăng nhập thất bại") }
         }
     }
 

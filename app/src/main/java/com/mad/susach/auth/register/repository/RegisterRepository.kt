@@ -1,4 +1,4 @@
-package com.mad.susach.main.auth.register.repository
+package com.mad.susach.auth.register.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser

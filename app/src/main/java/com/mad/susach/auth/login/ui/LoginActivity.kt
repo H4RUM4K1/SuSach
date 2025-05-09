@@ -1,4 +1,4 @@
-package com.mad.susach.main.auth.login.ui
+package com.mad.susach.auth.login.ui
 
 import android.content.Intent
 import android.os.Bundle

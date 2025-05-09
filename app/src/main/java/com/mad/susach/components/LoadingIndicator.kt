@@ -1,4 +1,4 @@
-package com.mad.susach.main.components
+package com.mad.susach.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

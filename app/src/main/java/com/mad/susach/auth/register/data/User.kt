@@ -1,4 +1,4 @@
-package com.mad.susach.main.auth.register.data
+package com.mad.susach.auth.register.data
 
 data class User(
     val id: String = "",

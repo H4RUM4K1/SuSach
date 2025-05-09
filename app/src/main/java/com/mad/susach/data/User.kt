@@ -1,4 +1,4 @@
-package com.mad.susach.main.data
+package com.mad.susach.data
 
 data class User(
     val id: String = "",

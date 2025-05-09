@@ -1,4 +1,4 @@
-package com.mad.susach.main.auth.register.ui
+package com.mad.susach.auth.register.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*

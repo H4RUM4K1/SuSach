@@ -1,4 +1,4 @@
-package com.mad.susach.main.auth.login.viewmodel
+package com.mad.susach.auth.login.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
