@@ -5,11 +5,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.input.PasswordVisualTransformation // Add this import
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import com.mad.susach.model.data.User
 import com.mad.susach.viewmodel.AuthViewModel
 import com.mad.susach.viewmodel.AuthViewModel.AuthState
+import com.mad.susach.ui.components.LoadingIndicator
+import com.mad.susach.ui.components.ErrorMessage
 
 @Composable
 fun RegisterScreen(
@@ -69,9 +71,9 @@ fun RegisterScreen(
         Button(
             onClick = {
                 viewModel.register(
-                    email,
-                    password,
-                    User(
+                    email = email,
+                    password = password,
+                    user = User(
                         email = email,
                         fullName = fullName,
                         dateOfBirth = dateOfBirth,
@@ -85,8 +87,8 @@ fun RegisterScreen(
         }
 
         when (state) {
-            is AuthState.Loading -> CircularProgressIndicator()
-            is AuthState.Error -> Text((state as AuthState.Error).message)
+            is AuthState.Loading -> LoadingIndicator()
+            is AuthState.Error -> ErrorMessage((state as AuthState.Error).message)
             is AuthState.Success -> LaunchedEffect(Unit) { onRegisterSuccess() }
             else -> Unit
         }

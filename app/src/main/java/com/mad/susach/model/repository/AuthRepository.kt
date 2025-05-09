@@ -25,15 +25,16 @@ class AuthRepository {
     suspend fun register(email: String, password: String, user: User): Result<FirebaseUser> =
         withContext(Dispatchers.IO) {
             try {
+                // 1. Create auth account
                 val authResult = auth.createUserWithEmailAndPassword(email, password).await()
                 val userId = authResult.user!!.uid
-                
-                // Save user data to Firestore
+
+                // 2. Save user data to Firestore
                 db.collection("users")
                     .document(userId)
                     .set(user.copy(id = userId))
                     .await()
-                
+
                 Result.success(authResult.user!!)
             } catch (e: Exception) {
                 Result.failure(e)

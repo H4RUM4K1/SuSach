@@ -26,8 +26,12 @@ class AuthViewModel : ViewModel() {
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             repository.register(email, password, user)
-                .onSuccess { _authState.value = AuthState.Success }
-                .onFailure { _authState.value = AuthState.Error(it.message ?: "Registration failed") }
+                .onSuccess { 
+                    _authState.value = AuthState.Success 
+                }
+                .onFailure { 
+                    _authState.value = AuthState.Error(it.message ?: "Registration failed") 
+                }
         }
     }
 
