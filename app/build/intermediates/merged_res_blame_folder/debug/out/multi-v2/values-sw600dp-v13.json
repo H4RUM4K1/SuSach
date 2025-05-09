@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.mad.susach.app-mergeDebugResources-67:/values-sw600dp-v13/values-sw600dp-v13.xml",
+            "outputFile": "com.mad.susach.app-mergeDebugResources-64:/values-sw600dp-v13/values-sw600dp-v13.xml",
             "map": [
                 {
                     "source": "C:\\Users\\Lenovo\\.gradle\\caches\\8.10\\transforms\\5772bfaf2d380a8dfac27528a12c7c61\\transformed\\appcompat-1.6.1\\res\\values-sw600dp-v13\\values-sw600dp-v13.xml",

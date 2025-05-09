@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "com.mad.susach.app-mergeDebugResources-67:/values-large-v4/values-large-v4.xml",
+            "outputFile": "com.mad.susach.app-mergeDebugResources-64:/values-large-v4/values-large-v4.xml",
             "map": [
                 {
                     "source": "C:\\Users\\Lenovo\\.gradle\\caches\\8.10\\transforms\\0f3f599859bbaec808622878e5cd6fab\\transformed\\material-1.11.0\\res\\values-large-v4\\values-large-v4.xml",
