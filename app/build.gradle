@@ -50,6 +50,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx:24.10.3'
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3'
     // Jetpack Compose
     implementation 'androidx.activity:activity-compose:1.8.2'
     implementation 'androidx.compose.ui:ui:1.5.4'
@@ -58,4 +59,20 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-tooling:1.5.4'
     implementation 'androidx.compose.foundation:foundation:1.5.4'
     implementation 'androidx.compose.material:material:1.5.4'
+    
+    // Navigation Compose
+    implementation "androidx.navigation:navigation-compose:2.7.7"
+    
+    // Firebase UI Auth
+    implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
+    
+    // DateTime picker
+    implementation "com.maxkeppeler.sheets-compose-dialogs:core:1.0.2"
+    implementation "com.maxkeppeler.sheets-compose-dialogs:calendar:1.0.2"
+    
+    // Image loading
+    implementation "io.coil-kt:coil-compose:2.4.0"
+    
+    // View Model utilities for Compose
+    implementation "androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0"
 }
