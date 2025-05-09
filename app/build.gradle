@@ -3,10 +3,10 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
     id 'com.google.gms.google-services'
-    id 'com.android.application'
 }
 
 android {
+    namespace "com.mad.susach"
     compileSdkVersion 34
     defaultConfig {
         applicationId "com.mad.susach"
@@ -14,6 +14,12 @@ android {
         targetSdkVersion 34
         versionCode 1
         versionName "1.0"
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
     buildTypes {
         release {
@@ -37,4 +43,12 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
     implementation platform('com.google.firebase:firebase-bom:33.13.0')
     implementation 'com.google.firebase:firebase-analytics'
+    // Jetpack Compose
+    implementation 'androidx.activity:activity-compose:1.8.2'
+    implementation 'androidx.compose.ui:ui:1.5.4'
+    implementation 'androidx.compose.material3:material3:1.2.0'
+    implementation 'androidx.compose.ui:ui-tooling-preview:1.5.4'
+    debugImplementation 'androidx.compose.ui:ui-tooling:1.5.4'
+    implementation 'androidx.compose.foundation:foundation:1.5.4'
+    implementation 'androidx.compose.material:material:1.5.4'
 }
