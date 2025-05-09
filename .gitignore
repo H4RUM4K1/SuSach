@@ -21,7 +21,6 @@ gen/
 
 # Gradle files
 .gradle/
-.gradle/wrapper/
 build/
 app/build/
 
@@ -45,7 +44,6 @@ proguard/
 # Google Services (Firebase) configuration file
 # (Uncomment if you want to keep this out of git)
 # google-services.json
-# app/google-services.json
 
 # VS Code
 .vscode/
@@ -58,7 +56,6 @@ Thumbs.db
 
 # Crashlytics
 crashlytics-build.properties
-fabric.properties
 
 # Fastlane
 fastlane/report.xml
@@ -74,14 +71,3 @@ obj/
 # Misc
 captures/
 output.json
-
-# Release and debug folders
-app/release/
-app/debug/
-
-# Kotlin/Java build outputs
-*.war
-*.ear
-
-# Ignore test reports
-app/reports/
