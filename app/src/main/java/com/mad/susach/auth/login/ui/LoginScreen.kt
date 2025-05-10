@@ -6,9 +6,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import com.mad.susach.main.auth.login.viewmodel.LoginViewModel
-import com.mad.susach.main.components.LoadingIndicator
-import com.mad.susach.main.components.ErrorMessage
+import com.mad.susach.auth.login.viewmodel.LoginViewModel
+import com.mad.susach.components.LoadingIndicator
+import com.mad.susach.components.ErrorMessage
 
 @Composable
 fun LoginScreen(

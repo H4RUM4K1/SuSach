@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import com.mad.susach.main.auth.login.repository.LoginRepository
+import com.mad.susach.auth.login.repository.LoginRepository
 
 class LoginViewModel : ViewModel() {
     private val repository = LoginRepository()

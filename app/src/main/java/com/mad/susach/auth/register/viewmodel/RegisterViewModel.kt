@@ -2,8 +2,8 @@ package com.mad.susach.auth.register.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mad.susach.main.auth.register.data.User
-import com.mad.susach.main.auth.register.repository.RegisterRepository
+import com.mad.susach.auth.register.data.User
+import com.mad.susach.auth.register.repository.RegisterRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

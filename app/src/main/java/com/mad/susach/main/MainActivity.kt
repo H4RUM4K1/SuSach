@@ -68,12 +68,12 @@ fun HomeScreen(
         listOf(
             ContinueReadingItem(
                 title = "Chiến Dịch Hồ Chí Minh (1975)",
-                imageRes = R.drawable.ic_launcher_foreground,
+                imageRes = R.mipmap.ic_launcher_foreground,
                 progress = 0.7f
             ),
             ContinueReadingItem(
                 title = "Chiến tranh biên giới Việt - Trung (1979)",
-                imageRes = R.drawable.ic_launcher_foreground,
+                imageRes = R.mipmap.ic_launcher_foreground,
                 progress = 0.3f
             )
         )
@@ -244,9 +244,6 @@ fun ExploreSection(
                 contentAlignment = Alignment.Center
             ) {
                 Text("Nhân vật\nlịch sử", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-            MaterialTheme {
-                // TODO: Add main navigation here
-                // MainNavigation()
             }
         }
     }

@@ -7,8 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
 import com.mad.susach.main.MainActivity
-import com.mad.susach.main.auth.login.viewmodel.LoginViewModel
-import com.mad.susach.main.auth.login.viewmodel.LoginViewModelFactory
+import com.mad.susach.auth.login.viewmodel.LoginViewModel
+import com.mad.susach.auth.login.viewmodel.LoginViewModelFactory
 
 class LoginActivity : ComponentActivity() {
     private val viewModel: LoginViewModel by viewModels { LoginViewModelFactory() }

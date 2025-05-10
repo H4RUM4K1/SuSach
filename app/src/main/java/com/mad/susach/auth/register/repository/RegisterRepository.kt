@@ -3,7 +3,7 @@ package com.mad.susach.auth.register.repository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mad.susach.main.auth.register.data.User
+import com.mad.susach.auth.register.data.User
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

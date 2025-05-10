@@ -8,12 +8,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
-import com.mad.susach.main.components.LoadingIndicator
-import com.mad.susach.main.components.ErrorMessage
-import com.mad.susach.main.components.DatePickerDialog
-import com.mad.susach.main.auth.register.viewmodel.RegisterViewModel
-import com.mad.susach.main.auth.register.data.User
-import com.mad.susach.main.auth.register.viewmodel.RegisterViewModel.AuthState
+import com.mad.susach.components.LoadingIndicator
+import com.mad.susach.components.ErrorMessage
+import com.mad.susach.components.DatePickerDialog
+import com.mad.susach.auth.register.viewmodel.RegisterViewModel
+import com.mad.susach.auth.register.data.User
+import com.mad.susach.auth.register.viewmodel.RegisterViewModel.AuthState
 
 @Composable
 fun RegisterScreen(
