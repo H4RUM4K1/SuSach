@@ -1,15 +1,8 @@
 package com.mad.susach.components
 
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
-import androidx.compose.runtime.Composable
-import java.time.Instant
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -19,15 +12,14 @@ fun DatePickerDialog(
     onDismiss: () -> Unit
 ) {
     val datePickerState = rememberDatePickerState()
-    
+
     DatePickerDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = {
                 datePickerState.selectedDateMillis?.let { millis ->
-                    val instant = Instant.ofEpochMilli(millis)
-                    val date = LocalDate.ofInstant(instant, ZoneId.systemDefault())
-                    val formatted = date.format(DateTimeFormatter.ISO_DATE)
+                    val date = LocalDate.ofEpochDay(millis / (24 * 60 * 60 * 1000))
+                    val formatted = date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
                     onDateSelected(formatted)
                 }
                 onDismiss()

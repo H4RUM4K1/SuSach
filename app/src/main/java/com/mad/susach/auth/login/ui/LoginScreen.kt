@@ -4,67 +4,70 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mad.susach.auth.login.viewmodel.LoginViewModel
-import com.mad.susach.components.LoadingIndicator
-import com.mad.susach.components.ErrorMessage
+import com.mad.susach.auth.login.viewmodel.LoginUiState
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel,
-    onNavigateToRegister: () -> Unit,
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onRegisterClick: () -> Unit,
+    viewModel: LoginViewModel = viewModel()
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
-    val state by viewModel.authState.collectAsState()
+    val state by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center
+            .padding(16.dp)
     ) {
-        TextField(
+        OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = { Text("Email") },
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         Spacer(modifier = Modifier.height(8.dp))
-        
-        TextField(
+
+        OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { Text("Mật khẩu") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth()
         )
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
+
         Button(
             onClick = { viewModel.login(email, password) },
+            enabled = !state.isLoading,
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Đăng nhập")
         }
-        
-        TextButton(
-            onClick = onNavigateToRegister,
-            modifier = Modifier.fillMaxWidth()
-        ) {
+
+        TextButton(onClick = onRegisterClick) {
             Text("Chưa có tài khoản? Đăng ký ngay")
         }
 
-        when (val currentState = state) {
-            is LoginViewModel.AuthState.Loading -> LoadingIndicator()
-            is LoginViewModel.AuthState.Error -> ErrorMessage(currentState.message)
-            is LoginViewModel.AuthState.Success -> LaunchedEffect(Unit) { onLoginSuccess() }
-            else -> Unit
+        if (state.isLoading) {
+            CircularProgressIndicator()
+        }
+
+        state.error?.let { error ->
+            Text(error, color = MaterialTheme.colorScheme.error)
+        }
+
+        if (state.isSuccess) {
+            LaunchedEffect(Unit) {
+                onLoginSuccess()
+            }
         }
     }
 }

@@ -5,27 +5,27 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.material3.MaterialTheme
 import com.mad.susach.main.MainActivity
+import com.mad.susach.auth.register.ui.RegisterActivity
 import com.mad.susach.auth.login.viewmodel.LoginViewModel
-import com.mad.susach.auth.login.viewmodel.LoginViewModelFactory
 
 class LoginActivity : ComponentActivity() {
-    private val viewModel: LoginViewModel by viewModels { LoginViewModelFactory() }
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MaterialTheme {
-                LoginScreen(
-                    viewModel = viewModel,
-                    onNavigateToRegister = { /* TODO */ },
-                    onLoginSuccess = { 
-                        startActivity(Intent(this, MainActivity::class.java))
-                        finish()
-                    }
-                )
-            }
+            LoginContent(
+                onLoginSuccess = {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    finish()
+                },
+                onRegisterClick = {
+                    val intent = Intent(this, RegisterActivity::class.java)
+                    startActivity(intent)
+                },
+                viewModel = viewModel
+            )
         }
     }
 }

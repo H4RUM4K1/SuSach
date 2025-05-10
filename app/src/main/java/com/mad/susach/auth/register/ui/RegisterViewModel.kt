@@ -1,22 +1,22 @@
-package com.mad.susach.auth.login.viewmodel
+package com.mad.susach.auth.register.ui
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-data class LoginUiState(
+data class RegisterUiState(
     val isLoading: Boolean = false,
     val isSuccess: Boolean = false,
     val error: String? = null
 )
 
-class LoginViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow(LoginUiState())
-    val uiState: StateFlow<LoginUiState> = _uiState
+class RegisterViewModel : ViewModel() {
+    private val _uiState = MutableStateFlow(RegisterUiState())
+    val uiState: StateFlow<RegisterUiState> = _uiState
 
-    fun login(email: String, password: String) {
+    fun register(email: String, password: String) {
         _uiState.value = _uiState.value.copy(isLoading = true)
-        // TODO: Implement Firebase Auth
+        // TODO: Implement Firebase Auth registration
         _uiState.value = _uiState.value.copy(
             isLoading = false,
             isSuccess = true
