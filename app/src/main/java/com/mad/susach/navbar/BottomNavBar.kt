@@ -88,7 +88,7 @@ fun MainBottomNavBar(
                                 onSelected(index)
                                 when (index) {
                                     0 -> ctx.startActivity(Intent(ctx, com.mad.susach.main.MainActivity::class.java))
-                                    // 1, 2: TODO: Replace with PracticeActivity, UserActivity
+                                    2 -> ctx.startActivity(Intent(ctx, com.mad.susach.profile.ui.ProfileActivity::class.java))
                                 }
                             })
                     ) {
