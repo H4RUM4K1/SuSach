@@ -87,6 +87,16 @@ fun LoginContent(
                     }
                 }
 
+                OutlinedButton(
+                    onClick = onLoginSuccess,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(50.dp)
+                        .padding(top = 8.dp)
+                ) {
+                    Text("Chế độ khách", fontSize = 16.sp)
+                }
+
                 TextButton(
                     onClick = onRegisterClick,
                     modifier = Modifier.padding(top = 8.dp)
