@@ -63,28 +63,33 @@ fun EraSelectionScreen(
     )
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = {
-                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        Text(
-                            text = "Chọn thời kì",
-                            color = Color(0xFFFF6600),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 22.sp,
-                            fontFamily = FontFamily(Font(R.font.sitka_small_semibold))
-                        )
-                    }
-                },
-                navigationIcon = {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(56.dp), // Standard AppBar height
+                contentAlignment = Alignment.Center
+            ) {
+                // Back arrow on the left
+                Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
                     IconButton(onClick = { navToTimeline("") }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = Color(0xFFFF6600)
+                            tint = Color(0xFF222222) // Black-grey, same as SearchScreen
                         )
                     }
+                    Spacer(Modifier.weight(1f))
+                    Text(
+                        text = "Chọn thời kì",
+                        color = Color(0xFFFF6600),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 22.sp,
+                        fontFamily = FontFamily(Font(R.font.sitka_small_semibold)),
+                        modifier = Modifier.align(Alignment.CenterVertically)
+                    )
+                    Spacer(Modifier.weight(1f))
                 }
-            )
+            }
         }
     ) { paddingValues ->
         Column(
