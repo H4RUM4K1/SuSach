@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +46,7 @@ fun SearchScreen(
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back")
             }
             Box(modifier = Modifier.weight(1f)) {
-                TextField(
+                OutlinedTextField(
                     value = query,
                     onValueChange = {
                         query = it
@@ -57,10 +58,12 @@ fun SearchScreen(
                         .defaultMinSize(minHeight = 44.dp)
                         .heightIn(min = 44.dp),
                     singleLine = true,
-                    colors = TextFieldDefaults.textFieldColors(
-                        containerColor = Color.White,
-                        focusedIndicatorColor = Color(0xFFFF6600),
-                        unfocusedIndicatorColor = Color(0xFFFF6600)
+                    shape = RoundedCornerShape(22.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color(0xFFFF6600),
+                        unfocusedBorderColor = Color(0x33FF6600),
+                        cursorColor = Color(0xFFFF6600),
+                        containerColor = Color.White
                     ),
                     trailingIcon = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -77,25 +80,98 @@ fun SearchScreen(
                 )
             }
         }
-        Spacer(Modifier.height(12.dp))
-        Row {
-            Text("Tìm kiếm:", color = Color(0xFFFF6600), fontWeight = FontWeight.Bold)
-            Spacer(Modifier.width(4.dp))
-            Text("Bất kì", color = Color.Black)
-            Spacer(Modifier.width(16.dp))
-            Text("Sắp xếp:", color = Color(0xFFFF6600), fontWeight = FontWeight.Bold)
-            Spacer(Modifier.width(4.dp))
-            Text("Lượt xem", color = Color.Black)
+
+        Spacer(Modifier.height(6.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(36.dp)
+                .background(Color(0xFFFDF6F0)), // Match background
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Tìm kiếm box
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .background(Color(0xFFFDF6F0), shape = RoundedCornerShape(12.dp))
+                    .padding(horizontal = 12.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Tìm kiếm:", color = Color(0xFFFF6600), fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.width(4.dp))
+                    // Dropdown for filter
+                    var expanded by remember { mutableStateOf(false) }
+                    Box {
+                        Text(
+                            "Bất kì",
+                            color = Color.Black,
+                            modifier = Modifier
+                                .clickable { expanded = true }
+                                .padding(vertical = 8.dp, horizontal = 8.dp)
+                        )
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(text = { Text("Bất kì") }, onClick = { expanded = false })
+                            DropdownMenuItem(text = { Text("Sự kiện") }, onClick = { expanded = false })
+                            DropdownMenuItem(text = { Text("Trắc nghiệm") }, onClick = { expanded = false })
+                        }
+                    }
+                }
+            }
+            Spacer(Modifier.width(12.dp))
+            // Sắp xếp box
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .background(Color(0xFFFDF6F0), shape = RoundedCornerShape(12.dp))
+                    .padding(horizontal = 12.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Sắp xếp:", color = Color(0xFFFF6600), fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.width(4.dp))
+                    // Dropdown for sort
+                    var expandedSort by remember { mutableStateOf(false) }
+                    Box {
+                        Text(
+                            "Lượt xem",
+                            color = Color.Black,
+                            modifier = Modifier
+                                .clickable { expandedSort = true }
+                                .padding(vertical = 8.dp, horizontal = 8.dp)
+                        )
+                        DropdownMenu(
+                            expanded = expandedSort,
+                            onDismissRequest = { expandedSort = false }
+                        ) {
+                            DropdownMenuItem(text = { Text("Lượt xem") }, onClick = { expandedSort = false })
+                            DropdownMenuItem(text = { Text("Mới nhất") }, onClick = { expandedSort = false })
+                            DropdownMenuItem(text = { Text("Xưa nhất") }, onClick = { expandedSort = false })
+
+                        }
+                    }
+                }
+            }
         }
-        Spacer(Modifier.height(12.dp))
+
+        Spacer(Modifier.height(6.dp))
+
         Card(
             Modifier
                 .fillMaxWidth()
                 .background(Color.White)
         ) {
-            LazyColumn {
-                items(results) { item ->
-                    SearchResultRow(item, onResultClick)
+            Box(Modifier.background(Color.White)) {
+                LazyColumn {
+                    items(results) { item ->
+                        SearchResultRow(item, onResultClick)
+                    }
                 }
             }
         }
@@ -131,13 +207,183 @@ fun SearchResultRow(item: SearchResult, onClick: (SearchResult) -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true, name = "SearchScreen Preview")
 @Composable
 fun SearchScreenPreview() {
-    SearchScreen(
+    val fakeResults = listOf(
+        SearchResult(title = "Nhà Đinh", year = "968 - 980"),
+        SearchResult(title = "Nhà Tiền Lê", year = "980 - 1009"),
+        SearchResult(title = "Nhà Lý", year = "1009 - 1225")
+    )
+    SearchScreenFake(
         initialQuery = "",
         onBack = {},
         onResultClick = {},
-        viewModel = SearchViewModel()
+        results = fakeResults
     )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SearchScreenFake(
+    initialQuery: String = "",
+    onBack: (String) -> Unit,
+    onResultClick: (SearchResult) -> Unit,
+    results: List<SearchResult>
+) {
+    var query by remember { mutableStateOf(initialQuery) }
+    Column(
+        Modifier
+            .fillMaxSize()
+            .background(Color(0xFFFDF6F0))
+            .padding(horizontal = 16.dp)
+    ) {
+        Spacer(Modifier.height(16.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconButton(onClick = { onBack(query) }) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+            }
+            Box(modifier = Modifier.weight(1f)) {
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = { query = it },
+                    placeholder = { Text("Tìm gì đó...") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .defaultMinSize(minHeight = 44.dp)
+                        .heightIn(min = 44.dp),
+                    singleLine = true,
+                    shape = RoundedCornerShape(22.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color(0xFFFF6600),
+                        unfocusedBorderColor = Color(0x33FF6600),
+                        cursorColor = Color(0xFFFF6600),
+                        containerColor = Color.White
+                    ),
+                    trailingIcon = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            if (query.isNotEmpty()) {
+                                IconButton(onClick = { query = "" }) {
+                                    Icon(Icons.Default.Close, contentDescription = "Clear search")
+                                }
+                            }
+                            IconButton(onClick = { }) {
+                                Icon(Icons.Default.Search, contentDescription = "Search", tint = Color(0xFFFF6600))
+                            }
+                        }
+                    }
+                )
+            }
+        }
+
+        Spacer(Modifier.height(6.dp))
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(36.dp)
+                .background(Color(0xFFFDF6F0)), // Match background
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            // Tìm kiếm box
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .background(Color(0xFFFDF6F0), shape = RoundedCornerShape(12.dp))
+                    .padding(horizontal = 12.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Tìm kiếm:", color = Color(0xFFFF6600), fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.width(4.dp))
+                    // Dropdown for filter
+                    var expanded by remember { mutableStateOf(false) }
+                    Box {
+                        Text(
+                            "Bất kì",
+                            color = Color.Black,
+                            modifier = Modifier
+                                .clickable { expanded = true }
+                                .padding(vertical = 8.dp, horizontal = 8.dp)
+                        )
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(text = { Text("Bất kì") }, onClick = { expanded = false })
+                            DropdownMenuItem(text = { Text("Sự kiện") }, onClick = { expanded = false })
+                            DropdownMenuItem(text = { Text("Trắc nghiệm") }, onClick = { expanded = false })
+                        }
+                    }
+                }
+            }
+
+
+            Spacer(Modifier.width(12.dp))
+
+
+            // Sắp xếp box
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+                    .background(Color(0xFFFDF6F0), shape = RoundedCornerShape(12.dp))
+                    .padding(horizontal = 12.dp),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text("Sắp xếp:", color = Color(0xFFFF6600), fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.width(4.dp))
+                    // Dropdown for sort
+                    var expandedSort by remember { mutableStateOf(false) }
+                    Box {
+                        Text(
+                            "Lượt xem",
+                            color = Color.Black,
+                            modifier = Modifier
+                                .clickable { expandedSort = true }
+                                .padding(vertical = 8.dp, horizontal = 8.dp)
+                        )
+                        DropdownMenu(
+                            expanded = expandedSort,
+                            onDismissRequest = { expandedSort = false }
+                        ) {
+                            DropdownMenuItem(text = { Text("Lượt xem") }, onClick = { expandedSort = false })
+                            DropdownMenuItem(text = { Text("Mới nhất") }, onClick = { expandedSort = false })
+                            DropdownMenuItem(text = { Text("Xưa nhất") }, onClick = { expandedSort = false })
+
+                        }
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(6.dp))
+
+        Card(
+            Modifier
+                .fillMaxWidth()
+                .background(Color.White)
+        ) {
+            Box(Modifier.background(Color.White)) {
+                LazyColumn {
+                    items(results) { item ->
+                        SearchResultRow(item, onResultClick)
+                    }
+                }
+            }
+        }
+        Spacer(Modifier.height(16.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Default.ArrowForward, contentDescription = null, tint = Color(0xFFFF6600))
+            Spacer(Modifier.width(4.dp))
+            Text("Theo vào timeline", color = Color(0xFFFF6600))
+            Spacer(Modifier.width(16.dp))
+            Icon(Icons.Default.NorthEast, contentDescription = null, tint = Color.Black)
+            Spacer(Modifier.width(4.dp))
+            Text("Truy cập bài viết", color = Color.Black)
+        }
+    }
 }
