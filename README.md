@@ -1,4 +1,4 @@
-# Sử Sách
+n# Sử Sách
 =======
 
 SuSach is an Android app built with Kotlin and MVVM architecture. It features login/guest mode, article browsing (Events and Historical Figures), social features (comments, likes), a dynamic timeline, quizzes, and Firebase/Retrofit integration.

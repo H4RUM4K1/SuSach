@@ -1,13 +1,12 @@
-package com.mad.susach.event.data.model
 
 data class Event(
     val id: String,
-    val eraId: String? = null,
+    val eraId: String,
     val name: String,
     val description: String,
-    val year: Int,
-    val date: String,
-    val imageUrl: String? = null,
-    val articleId: String
-
+    val time: String,
+    val imageURL: String,
+    val imageContent: String,
+    val summary: String,
+    var content: String
 )
