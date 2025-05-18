@@ -64,10 +64,4 @@ fun TimelineScreen(
     }
 }
 
-// Preview for TimelineScreen (Optional)
-// @Preview(showBackground = true)
-// @Composable
-// fun TimelineScreenPreview() {
-//    // Similar to EraSelectionScreen, providing a mock ViewModel or data is needed.
-//    // TimelineScreen(eraId = "preview_era_id", navToEventDetail = {})
-// }
+

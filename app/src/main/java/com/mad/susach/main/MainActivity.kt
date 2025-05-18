@@ -68,14 +68,14 @@ fun HomeScreen(
     val Saved = remember {
         listOf(
             SavedItem(
-                title = "Chiến Dịch Hồ Chí Minh (1975)",
+                title = "Chiến Dịch Hồ Chí Minh",
                 imageRes = R.mipmap.ic_launcher_foreground,
-                progress = 0.7f
+                year = "1975"
             ),
             SavedItem(
-                title = "Chiến tranh biên giới Việt - Trung (1979)",
+                title = "Chiến tranh biên giới Việt - Trung",
                 imageRes = R.mipmap.ic_launcher_foreground,
-                progress = 0.3f
+                year = "1979"
             )
         )
     }
@@ -153,7 +153,7 @@ fun HomeScreen(
 
             SavedCarousel(items = Saved, onClick = onSavedClick)
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(12.dp))
 
             Text("Khám phá", fontWeight = FontWeight.SemiBold, fontSize = 21.sp)
 
@@ -161,11 +161,10 @@ fun HomeScreen(
 
             ExploreSection(
                 onTimelineClick = { navController.navigate(Screen.EraSelection.route) },
-                onTerritoryClick = onTerritoryClick,
-                onRandomArticleClick = onRandomArticleClick 
+                onMapClick = {},
+                onRandomClick = {}
             )
 
-            Spacer(Modifier.weight(1f))
         }
         MainBottomNavBar(
             selected = selectedNav,
@@ -216,109 +215,185 @@ fun SavedCarousel(items: List<SavedItem>, onClick: () -> Unit) {
     }
 }
 
+data class SavedItem(val title: String, val imageRes: Int?, val year: String)
+
 @Composable
 fun SavedCard(item: SavedItem, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .width(180.dp)
-            .height(120.dp)
+            .height(150.dp)
             .clickable { onClick() },
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column(Modifier.fillMaxSize()) {
-            Image(
-                painter = painterResource(id = item.imageRes),
-                contentDescription = null,
+        Box(Modifier.fillMaxSize()) {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .padding(bottom = 32.dp) // leave space for year box
+            ) {
+                if (item.imageRes != null) {
+                    Image(
+                        painter = painterResource(id = item.imageRes),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .height(60.dp)
+                            .fillMaxWidth()
+                    )
+                } else {
+                    Spacer(Modifier.height(8.dp))
+                }
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    item.title,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .weight(1f, fill = false)
+                )
+            }
+            // Year box absolutely at the bottom
+            Box(
                 modifier = Modifier
-                    .height(60.dp)
                     .fillMaxWidth()
-            )
-            Spacer(Modifier.height(8.dp))
-            Text(
-                item.title,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(horizontal = 8.dp)
-            )
-            Spacer(Modifier.height(4.dp))
-            LinearProgressIndicator(
-                progress = { item.progress }, // Use lambda overload to avoid deprecation
-                color = Color(0xFFFF6600),
-                trackColor = Color(0xFFF2F2F2),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(4.dp)
-                    .padding(horizontal = 8.dp)
-            )
+                    .height(32.dp)
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        Color(0xFFFF6600),
+                        shape = RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = item.year,
+                    color = Color.White,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp
+                )
+            }
         }
     }
 }
 
-data class SavedItem(val title: String, val imageRes: Int, val progress: Float)
-
 @Composable
 fun ExploreSection(
     onTimelineClick: () -> Unit,
-    onTerritoryClick: () -> Unit,
-    onRandomArticleClick: () -> Unit
+    onMapClick: () -> Unit,
+    onRandomClick: () -> Unit
 ) {
-    Column(Modifier.fillMaxWidth()) {
-        //"Theo dòng sử Việt"
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        // Top large card: Theo dòng sử Việt
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(150.dp)
+                .height(160.dp)
                 .clickable { onTimelineClick() },
-            shape = RoundedCornerShape(18.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
-            colors = CardDefaults.cardColors(containerColor = Color(0xFFFF6600))
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFFF6600)),
+            elevation = CardDefaults.cardElevation(8.dp)
         ) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Row(
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ex1),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxHeight()
+
+                )
+                Spacer(Modifier.width(16.dp))
                 Text(
-                    "Theo\ndòng sử Việt",
+                    text = "Theo\ndòng\nsử Việt",
                     color = Color.White,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    lineHeight = 30.sp
+                    fontSize = 28.sp,
+                    lineHeight = 32.sp
                 )
             }
         }
-        Spacer(Modifier.height(24.dp))
-        // Bottom row: two square buttons
+        Spacer(Modifier.height(16.dp))
         Row(Modifier.fillMaxWidth()) {
+            // Bottom left: Lãnh Thổ qua các thời kỳ
             Card(
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1f)
-                    .clickable { onTerritoryClick() },
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFF6600))
+                    .clickable { onMapClick() },
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFF6600)),
+                elevation = CardDefaults.cardElevation(8.dp)
             ) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("Lãnh Thổ\nqua các thời kỳ", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp, lineHeight = 20.sp)
+
+                    Row(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+
+                    ) {
+                        Text(
+                            text = "Lãnh Thổ\nqua các\nthời kỳ",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            lineHeight = 20.sp,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(start = 12.dp)
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.ex2),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .weight(1f)
+                        )
                     }
-                }
+
             }
-            Spacer(Modifier.width(24.dp))
+            Spacer(Modifier.width(16.dp))
+            // Bottom right: Bài viết ngẫu nhiên
             Card(
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1f)
-                    .clickable { onRandomArticleClick() },
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(8.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFFF6600))
+                    .clickable { onRandomClick() },
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFFFF6600)),
+                elevation = CardDefaults.cardElevation(8.dp)
             ) {
-                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text("?", color = Color.White, fontWeight = FontWeight.ExtraBold, fontSize = 36.sp)
-                        Text("Bài viết\nngẫu nhiên", color = Color.White, fontWeight = FontWeight.Bold, fontSize = 16.sp, lineHeight = 20.sp)
-                    }
+                Row(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+
+                ) {
+                    Image(
+                        painter = painterResource(id = R.drawable.ex3),
+                        contentDescription = null,
+                        modifier = Modifier
+                            .size(84.dp)
+                            .padding(horizontal = 12.dp)
+                    )
+                    Text(
+                        text = "Bài\nviết\nngẫu nhiên",
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp,
+                        lineHeight = 20.sp,
+                        modifier = Modifier
+                                .padding(end = 12.dp)
+                    )
                 }
             }
         }
