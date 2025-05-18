@@ -392,7 +392,7 @@ fun ExploreSection(
                         fontSize = 16.sp,
                         lineHeight = 20.sp,
                         modifier = Modifier
-                                .padding(right = 12.dp)
+                                .padding(end = 12.dp)
                     )
                 }
             }
