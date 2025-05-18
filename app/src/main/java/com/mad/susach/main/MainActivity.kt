@@ -345,7 +345,7 @@ fun ExploreSection(
                             text = "Lãnh Thổ\nqua các\nthời kỳ",
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp,
+                            fontSize = 18.sp,
                             lineHeight = 20.sp,
                             modifier = Modifier
                                 .weight(1f)
@@ -382,14 +382,14 @@ fun ExploreSection(
                         painter = painterResource(id = R.drawable.ex3),
                         contentDescription = null,
                         modifier = Modifier
-                            .size(84.dp)
+                            .size(90.dp)
                             .padding(horizontal = 12.dp)
                     )
                     Text(
                         text = "Bài\nviết\nngẫu nhiên",
                         color = Color.White,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
+                        fontSize = 18.sp,
                         lineHeight = 20.sp,
                         modifier = Modifier
                                 .padding(end = 12.dp)

@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.mad.susach.R // Assuming you have a placeholder drawable
-import com.mad.susach.timeline.data.model.Event
+import com.mad.susach.event.data.model.Event
 
 @Composable
 fun EventItem(

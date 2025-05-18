@@ -100,7 +100,12 @@ fun SearchScreen(
                 contentAlignment = Alignment.CenterStart
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Tìm kiếm:", color = Color(0xFFFF6600), fontWeight = FontWeight.Bold)
+                    Text(
+                        "Tìm kiếm:",
+                        color = Color(0xFFFF6600),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
                     Spacer(Modifier.width(4.dp))
                     // Dropdown for filter
                     var expanded by remember { mutableStateOf(false) }
@@ -108,6 +113,7 @@ fun SearchScreen(
                         Text(
                             "Bất kì",
                             color = Color.Black,
+                            fontSize = 16.sp,
                             modifier = Modifier
                                 .clickable { expanded = true }
                                 .padding(vertical = 8.dp, horizontal = 8.dp)
@@ -116,9 +122,9 @@ fun SearchScreen(
                             expanded = expanded,
                             onDismissRequest = { expanded = false }
                         ) {
-                            DropdownMenuItem(text = { Text("Bất kì") }, onClick = { expanded = false })
-                            DropdownMenuItem(text = { Text("Sự kiện") }, onClick = { expanded = false })
-                            DropdownMenuItem(text = { Text("Trắc nghiệm") }, onClick = { expanded = false })
+                            DropdownMenuItem(text = { Text("Bất kì", fontSize = 16.sp) }, onClick = { expanded = false })
+                            DropdownMenuItem(text = { Text("Sự kiện", fontSize = 16.sp) }, onClick = { expanded = false })
+                            DropdownMenuItem(text = { Text("Trắc nghiệm", fontSize = 16.sp) }, onClick = { expanded = false })
                         }
                     }
                 }
@@ -134,7 +140,12 @@ fun SearchScreen(
                 contentAlignment = Alignment.CenterStart
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Sắp xếp:", color = Color(0xFFFF6600), fontWeight = FontWeight.Bold)
+                    Text(
+                        "Sắp xếp:",
+                        color = Color(0xFFFF6600),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
                     Spacer(Modifier.width(4.dp))
                     // Dropdown for sort
                     var expandedSort by remember { mutableStateOf(false) }
@@ -142,6 +153,7 @@ fun SearchScreen(
                         Text(
                             "Lượt xem",
                             color = Color.Black,
+                            fontSize = 16.sp,
                             modifier = Modifier
                                 .clickable { expandedSort = true }
                                 .padding(vertical = 8.dp, horizontal = 8.dp)
@@ -150,10 +162,9 @@ fun SearchScreen(
                             expanded = expandedSort,
                             onDismissRequest = { expandedSort = false }
                         ) {
-                            DropdownMenuItem(text = { Text("Lượt xem") }, onClick = { expandedSort = false })
-                            DropdownMenuItem(text = { Text("Mới nhất") }, onClick = { expandedSort = false })
-                            DropdownMenuItem(text = { Text("Xưa nhất") }, onClick = { expandedSort = false })
-
+                            DropdownMenuItem(text = { Text("A-Z", fontSize = 16.sp) }, onClick = { expandedSort = false })
+                            DropdownMenuItem(text = { Text("Mới nhất", fontSize = 16.sp) }, onClick = { expandedSort = false })
+                            DropdownMenuItem(text = { Text("Xưa nhất", fontSize = 16.sp) }, onClick = { expandedSort = false })
                         }
                     }
                 }
@@ -168,7 +179,9 @@ fun SearchScreen(
                 .background(Color.White)
         ) {
             Box(Modifier.background(Color.White)) {
-                LazyColumn {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
                     items(results) { item ->
                         SearchResultRow(item, onResultClick)
                     }
@@ -193,17 +206,31 @@ fun SearchResultRow(item: SearchResult, onClick: (SearchResult) -> Unit) {
     Row(
         Modifier
             .fillMaxWidth()
-            .clickable { onClick(item) }
-            .padding(vertical = 8.dp, horizontal = 8.dp),
+            .height(58.dp) // 1.2x of previous ~48dp
+            .clickable { onClick(item) },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column(Modifier.weight(1f)) {
-            Text(item.title, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+        Column(
+            Modifier
+                .weight(1f)
+                .padding(top = 6.dp, bottom = 6.dp, start = 12.dp) // 6dp padding inside text column
+        ) {
+            Text(
+                item.title,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 16.sp,
+                color = Color(0xFFFF6600) // Orange title
+            )
             Text(item.year, color = Color.Gray, fontSize = 13.sp)
         }
         Icon(Icons.Default.ArrowForward, contentDescription = null, tint = Color(0xFFFF6600))
         Spacer(Modifier.width(8.dp))
-        Icon(Icons.Default.NorthEast, contentDescription = null, tint = Color.Black)
+        Icon(
+            Icons.Default.NorthEast,
+            contentDescription = null,
+            tint = Color.Black,
+            modifier = Modifier.padding(end = 12.dp)
+        )
     }
 }
 
@@ -296,7 +323,12 @@ fun SearchScreenFake(
                 contentAlignment = Alignment.CenterStart
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Tìm kiếm:", color = Color(0xFFFF6600), fontWeight = FontWeight.Bold)
+                    Text(
+                        "Tìm kiếm:",
+                        color = Color(0xFFFF6600),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
                     Spacer(Modifier.width(4.dp))
                     // Dropdown for filter
                     var expanded by remember { mutableStateOf(false) }
@@ -304,6 +336,7 @@ fun SearchScreenFake(
                         Text(
                             "Bất kì",
                             color = Color.Black,
+                            fontSize = 16.sp,
                             modifier = Modifier
                                 .clickable { expanded = true }
                                 .padding(vertical = 8.dp, horizontal = 8.dp)
@@ -312,9 +345,9 @@ fun SearchScreenFake(
                             expanded = expanded,
                             onDismissRequest = { expanded = false }
                         ) {
-                            DropdownMenuItem(text = { Text("Bất kì") }, onClick = { expanded = false })
-                            DropdownMenuItem(text = { Text("Sự kiện") }, onClick = { expanded = false })
-                            DropdownMenuItem(text = { Text("Trắc nghiệm") }, onClick = { expanded = false })
+                            DropdownMenuItem(text = { Text("Bất kì", fontSize = 16.sp) }, onClick = { expanded = false })
+                            DropdownMenuItem(text = { Text("Sự kiện", fontSize = 16.sp) }, onClick = { expanded = false })
+                            DropdownMenuItem(text = { Text("Trắc nghiệm", fontSize = 16.sp) }, onClick = { expanded = false })
                         }
                     }
                 }
@@ -334,7 +367,12 @@ fun SearchScreenFake(
                 contentAlignment = Alignment.CenterStart
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text("Sắp xếp:", color = Color(0xFFFF6600), fontWeight = FontWeight.Bold)
+                    Text(
+                        "Sắp xếp:",
+                        color = Color(0xFFFF6600),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 16.sp
+                    )
                     Spacer(Modifier.width(4.dp))
                     // Dropdown for sort
                     var expandedSort by remember { mutableStateOf(false) }
@@ -342,6 +380,7 @@ fun SearchScreenFake(
                         Text(
                             "Lượt xem",
                             color = Color.Black,
+                            fontSize = 16.sp,
                             modifier = Modifier
                                 .clickable { expandedSort = true }
                                 .padding(vertical = 8.dp, horizontal = 8.dp)
@@ -350,9 +389,9 @@ fun SearchScreenFake(
                             expanded = expandedSort,
                             onDismissRequest = { expandedSort = false }
                         ) {
-                            DropdownMenuItem(text = { Text("Lượt xem") }, onClick = { expandedSort = false })
-                            DropdownMenuItem(text = { Text("Mới nhất") }, onClick = { expandedSort = false })
-                            DropdownMenuItem(text = { Text("Xưa nhất") }, onClick = { expandedSort = false })
+                            DropdownMenuItem(text = { Text("A-Z", fontSize = 16.sp) }, onClick = { expandedSort = false })
+                            DropdownMenuItem(text = { Text("Mới nhất", fontSize = 16.sp) }, onClick = { expandedSort = false })
+                            DropdownMenuItem(text = { Text("Xưa nhất", fontSize = 16.sp) }, onClick = { expandedSort = false })
 
                         }
                     }
@@ -368,7 +407,9 @@ fun SearchScreenFake(
                 .background(Color.White)
         ) {
             Box(Modifier.background(Color.White)) {
-                LazyColumn {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
                     items(results) { item ->
                         SearchResultRow(item, onResultClick)
                     }
