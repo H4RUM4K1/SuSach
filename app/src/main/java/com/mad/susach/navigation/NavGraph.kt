@@ -16,7 +16,6 @@ import com.mad.susach.auth.register.ui.RegisterScreen
 import com.mad.susach.main.HomeScreen
 import com.mad.susach.timeline.ui.eralselection.EraSelectionScreen
 import com.mad.susach.timeline.ui.timelineview.TimelineScreen
-import com.mad.susach.event.ui.eventdetail.EventDetailScreen
 import com.mad.susach.article.ui.ArticleScreen
 
 sealed class Screen(val route: String) {
@@ -28,9 +27,6 @@ sealed class Screen(val route: String) {
     object EraSelection : Screen("era_selection_screen")
     object TimelineView : Screen("timeline_view_screen/{eraId}") {
         fun createRoute(eraId: String) = "timeline_view_screen/$eraId"
-    }
-    object EventDetail : Screen("event_detail_screen/{eventId}") {
-        fun createRoute(eventId: String) = "event_detail_screen/$eventId"
     }
     object ArticleDetail : Screen("article_detail_screen/{articleId}") {
         fun createRoute(articleId: String) = "article_detail_screen/$articleId"
@@ -87,13 +83,7 @@ fun AppNavigation() {
                 onSearchClick = { query ->
                     navController.navigate(Screen.Search.createRoute(query))
                 },
-                onTimelineClick = {},
-                onTerritoryClick = {},
-                onRandomArticleClick = {},
-                onSavedClick = {}, // Add missing parameter
-                onNavSelected = {},
-                navController = navController,
-                searchPlaceholder = searchQueryState.value.ifBlank { "Hai Bà Trưng" }
+                navController = navController
             )
         }
         composable(Screen.EraSelection.route) {
@@ -111,19 +101,8 @@ fun AppNavigation() {
             if (eraId != null) {
                 TimelineScreen(
                     eraId = eraId,
-                    navToEventDetail = { eventId ->
-                        navController.navigate(Screen.EventDetail.createRoute(eventId))
-                    }
+                    navToEventDetail = { /* removed navigation to EventDetailScreen */ }
                 )
-            }
-        }
-        composable(
-            route = Screen.EventDetail.route,
-            arguments = listOf(navArgument("eventId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val eventId = backStackEntry.arguments?.getString("eventId")
-            if (eventId != null) {
-                EventDetailScreen(eventId = eventId, navController = navController)
             }
         }
         composable(

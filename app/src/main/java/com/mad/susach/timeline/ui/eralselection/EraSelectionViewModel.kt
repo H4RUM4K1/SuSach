@@ -1,16 +1,17 @@
 package com.mad.susach.timeline.ui.eralselection
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mad.susach.timeline.data.model.Era
-import com.mad.susach.timeline.data.repository.TimelineRepository
+import com.mad.susach.timeline.data.repository.EraRepository // Changed from TimelineRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class EraSelectionViewModel(
-    private val repository: TimelineRepository = TimelineRepository() // Basic injection for now
+    private val eraRepository: EraRepository = EraRepository() // Changed to EraRepository
 ) : ViewModel() {
 
     private val _eras = MutableStateFlow<List<Era>>(emptyList())
@@ -31,10 +32,11 @@ class EraSelectionViewModel(
             _isLoading.value = true
             _error.value = null
             try {
-                // In a real app, repository.getEras() would be a suspend function
-                // and might involve network calls or database queries.
-                _eras.value = repository.getEras()
+                val eras = eraRepository.getEras()
+                Log.d("EraSelectionViewModel", "Received eras: $eras")
+                _eras.value = eras // Changed to use eraRepository
             } catch (e: Exception) {
+                Log.e("EraSelectionViewModel", "Failed to load eras", e)
                 _error.value = "Failed to load eras: ${e.message}"
             } finally {
                 _isLoading.value = false

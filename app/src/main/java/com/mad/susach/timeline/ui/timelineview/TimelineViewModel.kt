@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.mad.susach.article.data.model.Article
 import com.mad.susach.event.data.model.Event
 import com.mad.susach.timeline.data.model.Era
+import com.mad.susach.timeline.data.repository.EraRepository
 import com.mad.susach.timeline.data.repository.TimelineRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
 
 class TimelineViewModel(
     private val repository: TimelineRepository = TimelineRepository(), // Basic injection
+    private val eraRepository: EraRepository = EraRepository(),
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -62,7 +64,8 @@ class TimelineViewModel(
     fun selectEvent(event: Event) {
         _selectedEvent.value = event
         // Optionally load article directly or navigate and then load
-        loadArticleForEvent(event.articleId)
+        // Use event.summary or event.content if you want, but Event does not have articleId
+        // Remove loadArticleForEvent(event.articleId)
     }
     
     private fun loadArticleForEvent(articleId: String) {
@@ -80,7 +83,7 @@ class TimelineViewModel(
     fun loadEraDetails(id: String) {
         viewModelScope.launch {
             try {
-                _selectedEra.value = repository.getEraById(id)
+                _selectedEra.value = eraRepository.getEraById(id)
             } catch (e: Exception) {
                 _error.value = "Failed to load era details: ${e.message}"
             }

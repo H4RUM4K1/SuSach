@@ -40,6 +40,7 @@ import com.mad.susach.timeline.ui.eralselection.EraSelectionScreen
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.shadow
+import androidx.navigation.NavController
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,15 +56,8 @@ fun HomeScreen(
     username: String,
     notificationCount: Int,
     onNotificationClick: () -> Unit,
-    onSearchClick: (String) -> Unit, // Pass search phrase
-    onTimelineClick: () -> Unit,
-    onTerritoryClick: () -> Unit,
-    onRandomArticleClick: () -> Unit,
-    onSavedClick: () -> Unit,
-    onNavSelected: (Int) -> Unit,
-    modifier: Modifier = Modifier,
-    navController: androidx.navigation.NavController,
-    searchPlaceholder: String = "Tìm gì đó..."
+    onSearchClick: (String) -> Unit,
+    navController: NavController
 ) {
     val Saved = remember {
         listOf(
@@ -80,11 +74,11 @@ fun HomeScreen(
         )
     }
     var selectedNav by remember { mutableStateOf(0) }
-    var searchText by remember { mutableStateOf(searchPlaceholder) }
+    var searchText by remember { mutableStateOf("Tìm gì đó...") }
     val context = LocalContext.current
 
     Box(
-        modifier
+        Modifier
             .fillMaxSize()
             .background(Color(0xFFFDF6F0))
     ) {
@@ -151,7 +145,7 @@ fun HomeScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            SavedCarousel(items = Saved, onClick = onSavedClick)
+            SavedCarousel(items = Saved, onClick = onNotificationClick)
 
             Spacer(Modifier.height(12.dp))
 
@@ -160,7 +154,9 @@ fun HomeScreen(
             Spacer(Modifier.height(12.dp))
 
             ExploreSection(
-                onTimelineClick = { navController.navigate(Screen.EraSelection.route) },
+                onTimelineClick = {
+                    navController.navigate(com.mad.susach.navigation.Screen.EraSelection.route)
+                },
                 onMapClick = {},
                 onRandomClick = {}
             )
@@ -170,7 +166,7 @@ fun HomeScreen(
             selected = selectedNav,
             onSelected = {
                 selectedNav = it
-                onNavSelected(it)
+                onNotificationClick() // Call with no arguments
             },
             context = context,
             modifier = Modifier
@@ -403,19 +399,12 @@ fun ExploreSection(
 @Preview(showBackground = true, name = "Trang chủ - Kiến thức")
 @Composable
 fun HomeScreenPreview() {
-    val mockNavController = rememberNavController()
     HomeScreen(
         username = "XXX",
         notificationCount = 5, // Provide a mock value
         onNotificationClick = {},
         onSearchClick = {},
-        onTimelineClick = {},
-        onTerritoryClick = {},
-        onRandomArticleClick = {},
-        onSavedClick = {},
-        onNavSelected = {},
-        navController = mockNavController,
-        searchPlaceholder = "Chiến dịch Điện Biên Phủ"
+        navController = rememberNavController()
     )
 }
 

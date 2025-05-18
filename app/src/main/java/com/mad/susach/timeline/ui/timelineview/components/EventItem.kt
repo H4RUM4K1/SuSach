@@ -21,7 +21,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.mad.susach.R // Assuming you have a placeholder drawable
 import com.mad.susach.event.data.model.Event
 
 @Composable
@@ -45,10 +44,10 @@ fun EventItem(
             // Placeholder for image - replace with actual image loading
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(event.imageUrl) // Use event.imageUrl if available, otherwise a placeholder
+                    .data(event.imageURL) // Use event.imageUrl if available, otherwise a placeholder
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(R.drawable.ic_launcher_background), // Replace with your placeholder
+                placeholder = null, // Replace with your placeholder
                 contentDescription = event.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -61,7 +60,10 @@ fun EventItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = event.name, style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = event.year.toString(), style = MaterialTheme.typography.bodySmall)
+                Text(
+                    text = formatEventDate(event.startDate, event.endDate),
+                    style = MaterialTheme.typography.bodySmall
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = event.description,
@@ -72,6 +74,9 @@ fun EventItem(
         }
     }
 }
+
+// Helper function for formatting event dates
+fun formatEventDate(start: Int, end: Int): String = if (start == end || end == 0) start.toString() else "$start - $end"
 
 // @Preview(showBackground = true)
 // @Composable

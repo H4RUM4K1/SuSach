@@ -1,72 +1,59 @@
 package com.mad.susach.event.data.repository
 
+import android.util.Log
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.mad.susach.event.data.model.Event
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.tasks.await
 
-// Placeholder repository for events
+// Repository for events
 class EventRepository {
+    private val db = Firebase.firestore
 
-    // Simulates fetching an event by ID
+    // Fetches an event by ID
     suspend fun getEventById(eventId: String): Event? {
-        delay(1000) // Simulate network delay
-        // Replace with actual data fetching logic (e.g., Firebase, Retrofit)
-        return sampleEvents.find { it.id == eventId }
+        return try {
+            val doc = db.collection("events").document(eventId).get().await()
+            val event = doc.toObject(Event::class.java)?.copy(id = doc.id)
+            Log.d("EventRepository", "Fetched event by id $eventId: $event")
+            event
+        } catch (e: Exception) {
+            Log.e("EventRepository", "Error fetching event by id $eventId", e)
+            null
+        }
     }
 
-    // Simulates fetching all events (e.g., for a list or search)
-    suspend fun getAllEvents(): List<Event> {
-        delay(1000) // Simulate network delay
-        return sampleEvents
+    // Fetches an event by name
+    suspend fun getEventByName(name: String): Event? {
+        return try {
+            val query = db.collection("events").whereEqualTo("name", name).get().await()
+            val doc = query.documents.firstOrNull() ?: return null
+            val event = doc.toObject(Event::class.java)?.copy(id = doc.id)
+            Log.d("EventRepository", "Fetched event by name $name: $event")
+            event
+        } catch (e: Exception) {
+            Log.e("EventRepository", "Error fetching event by name $name", e)
+            null
+        }
     }
 
-    // Simulates fetching events for a specific era (if needed by other features)
+    // Fetches events for a specific era
     suspend fun getEventsForEra(eraId: String): List<Event> {
-        delay(1000)
-        return sampleEvents.filter { it.eraId == eraId }.sortedBy { it.year }
+        return try {
+            val query = db.collection("events").whereEqualTo("eraId", eraId).get().await()
+            val events = query.documents.mapNotNull { it.toObject(Event::class.java)?.copy(id = it.id) }
+            Log.d("EventRepository", "Fetched events for era $eraId: $events")
+            events
+        } catch (e: Exception) {
+            Log.e("EventRepository", "Error fetching events for era $eraId", e)
+            emptyList()
+        }
     }
 
-
-    companion object {
-        // Sample data - replace with your actual data source
-        // Note: eraId is now nullable. Ensure your data reflects this if events can exist outside eras.
-        val sampleEvents = listOf(
-            Event(
-                id = "e1", 
-                eraId = "1", 
-                name = "Kinh Dương Vương lập nước Xích Quỷ", 
-                description = "Sự kiện đánh dấu sự khởi đầu của nhà nước sơ khai.", 
-                year = -2879, 
-                date = "Approx. 2879 BC",
-                articleId = "a1"
-            ),
-            Event(
-                id = "e2", 
-                eraId = "2", 
-                name = "An Dương Vương lập nước Âu Lạc", 
-                description = "Thục Phán An Dương Vương thống nhất các bộ lạc Lạc Việt và Âu Việt.", 
-                year = -257, 
-                date = "Approx. 257 BC",
-                articleId = "a2"
-            ),
-            Event(
-                id = "e3", 
-                eraId = "3", 
-                name = "Khởi nghĩa Hai Bà Trưng", 
-                description = "Cuộc khởi nghĩa chống lại ách đô hộ của nhà Hán.", 
-                year = 40, 
-                date = "40 AD",
-                articleId = "a3"
-            ),
-            // Example of an event not tied to a specific era (eraId = null)
-            Event(
-                id = "e4", 
-                eraId = null, 
-                name = "Phát hiện trống đồng Đông Sơn", 
-                description = "Phát hiện khảo cổ quan trọng minh chứng cho nền văn hóa Đông Sơn.", 
-                year = 1924, // Example year
-                date = "1924 AD",
-                articleId = "a4"
-            )
-        )
+    // Placeholder function to simulate network delay
+    private suspend fun <T> simulateNetworkDelay(block: suspend () -> T): T {
+        delay(1000) // Simulate network delay
+        return block()
     }
 }

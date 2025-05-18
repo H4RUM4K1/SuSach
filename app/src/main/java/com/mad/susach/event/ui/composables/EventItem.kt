@@ -21,7 +21,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.mad.susach.R // Assuming you have a placeholder drawable
 import com.mad.susach.event.data.model.Event // Updated import
 
 @Composable
@@ -44,11 +43,11 @@ fun EventItem(
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(event.imageUrl)
+                    .data(event.imageURL)
                     .crossfade(true)
                     .build(),
-                placeholder = painterResource(R.drawable.ic_launcher_background), // Changed to drawable
-                contentDescription = event.name, // Changed from event.title
+                placeholder = null,
+                contentDescription = event.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .height(80.dp)
@@ -56,9 +55,12 @@ fun EventItem(
             )
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(text = event.name, style = MaterialTheme.typography.titleMedium) // Changed from event.title
+                Text(text = event.name, style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = event.date, style = MaterialTheme.typography.bodySmall)
+                Text(
+                    text = formatEventDate(event.startDate, event.endDate),
+                    style = MaterialTheme.typography.bodySmall
+                )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = event.description,
@@ -68,4 +70,9 @@ fun EventItem(
             }
         }
     }
+}
+
+// Helper function for formatting event dates
+fun formatEventDate(start: Int, end: Int): String {
+    return if (start == end || end == 0) start.toString() else "$start - $end"
 }

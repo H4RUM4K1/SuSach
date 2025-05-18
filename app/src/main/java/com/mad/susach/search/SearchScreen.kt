@@ -5,12 +5,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.NorthEast
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -43,7 +43,7 @@ fun SearchScreen(
         Spacer(Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = { onBack(query) }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
             Box(modifier = Modifier.weight(1f)) {
                 OutlinedTextField(
@@ -59,12 +59,12 @@ fun SearchScreen(
                         .heightIn(min = 44.dp),
                     singleLine = true,
                     shape = RoundedCornerShape(22.dp),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color(0xFFFF6600),
-                        unfocusedBorderColor = Color(0x33FF6600),
-                        cursorColor = Color(0xFFFF6600),
-                        containerColor = Color.White
-                    ),
+                    // colors = OutlinedTextFieldDefaults.textFieldColors(
+                    //     focusedBorderColor = Color(0xFFFF6600),
+                    //     unfocusedBorderColor = Color(0x33FF6600),
+                    //     containerColor = Color.White
+                    // ),
+                    // Compose Material3 1.2.1 does not support custom colors for OutlinedTextField via OutlinedTextFieldDefaults. Use default colors or update Compose version for color customization.
                     trailingIcon = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             if (query.isNotEmpty()) {
@@ -109,9 +109,10 @@ fun SearchScreen(
                     Spacer(Modifier.width(4.dp))
                     // Dropdown for filter
                     var expanded by remember { mutableStateOf(false) }
+                    val selectedType = viewModel.selectedType
                     Box {
                         Text(
-                            "Bất kì",
+                            selectedType,
                             color = Color.Black,
                             fontSize = 16.sp,
                             modifier = Modifier
@@ -122,9 +123,9 @@ fun SearchScreen(
                             expanded = expanded,
                             onDismissRequest = { expanded = false }
                         ) {
-                            DropdownMenuItem(text = { Text("Bất kì", fontSize = 16.sp) }, onClick = { expanded = false })
-                            DropdownMenuItem(text = { Text("Sự kiện", fontSize = 16.sp) }, onClick = { expanded = false })
-                            DropdownMenuItem(text = { Text("Trắc nghiệm", fontSize = 16.sp) }, onClick = { expanded = false })
+                            DropdownMenuItem(text = { Text("Bất kì", fontSize = 16.sp) }, onClick = { viewModel.setType("Bất kì"); expanded = false })
+                            DropdownMenuItem(text = { Text("Sự kiện", fontSize = 16.sp) }, onClick = { viewModel.setType("Sự kiện"); expanded = false })
+                            DropdownMenuItem(text = { Text("Trắc nghiệm", fontSize = 16.sp) }, onClick = { viewModel.setType("Trắc nghiệm"); expanded = false })
                         }
                     }
                 }
@@ -149,9 +150,10 @@ fun SearchScreen(
                     Spacer(Modifier.width(4.dp))
                     // Dropdown for sort
                     var expandedSort by remember { mutableStateOf(false) }
+                    val selectedSort = viewModel.selectedSort
                     Box {
                         Text(
-                            "Lượt xem",
+                            selectedSort,
                             color = Color.Black,
                             fontSize = 16.sp,
                             modifier = Modifier
@@ -162,9 +164,9 @@ fun SearchScreen(
                             expanded = expandedSort,
                             onDismissRequest = { expandedSort = false }
                         ) {
-                            DropdownMenuItem(text = { Text("A-Z", fontSize = 16.sp) }, onClick = { expandedSort = false })
-                            DropdownMenuItem(text = { Text("Mới nhất", fontSize = 16.sp) }, onClick = { expandedSort = false })
-                            DropdownMenuItem(text = { Text("Xưa nhất", fontSize = 16.sp) }, onClick = { expandedSort = false })
+                            DropdownMenuItem(text = { Text("A-Z", fontSize = 16.sp) }, onClick = { viewModel.setSort("A-Z"); expandedSort = false })
+                            DropdownMenuItem(text = { Text("Mới nhất", fontSize = 16.sp) }, onClick = { viewModel.setSort("Mới nhất"); expandedSort = false })
+                            DropdownMenuItem(text = { Text("Xưa nhất", fontSize = 16.sp) }, onClick = { viewModel.setSort("Xưa nhất"); expandedSort = false })
                         }
                     }
                 }
@@ -190,7 +192,7 @@ fun SearchScreen(
         }
         Spacer(Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.ArrowForward, contentDescription = null, tint = Color(0xFFFF6600))
+            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = Color(0xFFFF6600))
             Spacer(Modifier.width(4.dp))
             Text("Theo vào timeline", color = Color(0xFFFF6600))
             Spacer(Modifier.width(16.dp))
@@ -223,7 +225,7 @@ fun SearchResultRow(item: SearchResult, onClick: (SearchResult) -> Unit) {
             )
             Text(item.year, color = Color.Gray, fontSize = 13.sp)
         }
-        Icon(Icons.Default.ArrowForward, contentDescription = null, tint = Color(0xFFFF6600))
+        Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = Color(0xFFFF6600))
         Spacer(Modifier.width(8.dp))
         Icon(
             Icons.Default.NorthEast,
@@ -269,7 +271,7 @@ fun SearchScreenFake(
         Spacer(Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = { onBack(query) }) {
-                Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
             Box(modifier = Modifier.weight(1f)) {
                 OutlinedTextField(
@@ -282,12 +284,12 @@ fun SearchScreenFake(
                         .heightIn(min = 44.dp),
                     singleLine = true,
                     shape = RoundedCornerShape(22.dp),
-                    colors = TextFieldDefaults.outlinedTextFieldColors(
-                        focusedBorderColor = Color(0xFFFF6600),
-                        unfocusedBorderColor = Color(0x33FF6600),
-                        cursorColor = Color(0xFFFF6600),
-                        containerColor = Color.White
-                    ),
+                    // colors = OutlinedTextFieldDefaults.textFieldColors(
+                    //     focusedBorderColor = Color(0xFFFF6600),
+                    //     unfocusedBorderColor = Color(0x33FF6600),
+                    //     containerColor = Color.White
+                    // ),
+                    // Compose Material3 1.2.1 does not support custom colors for OutlinedTextField via OutlinedTextFieldDefaults. Use default colors or update Compose version for color customization.
                     trailingIcon = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             if (query.isNotEmpty()) {
@@ -378,7 +380,7 @@ fun SearchScreenFake(
                     var expandedSort by remember { mutableStateOf(false) }
                     Box {
                         Text(
-                            "Lượt xem",
+                            "A-Z",
                             color = Color.Black,
                             fontSize = 16.sp,
                             modifier = Modifier
@@ -418,7 +420,7 @@ fun SearchScreenFake(
         }
         Spacer(Modifier.height(16.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.Default.ArrowForward, contentDescription = null, tint = Color(0xFFFF6600))
+            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = Color(0xFFFF6600))
             Spacer(Modifier.width(4.dp))
             Text("Theo vào timeline", color = Color(0xFFFF6600))
             Spacer(Modifier.width(16.dp))
