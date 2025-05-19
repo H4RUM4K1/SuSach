@@ -1,10 +1,8 @@
 package com.mad.susach.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,7 +15,7 @@ import com.mad.susach.auth.register.ui.RegisterScreen
 import com.mad.susach.main.HomeScreen
 import com.mad.susach.timeline.ui.eralselection.EraSelectionScreen
 import com.mad.susach.timeline.ui.timelineview.TimelineScreen
-import com.mad.susach.article.ui.ArticleScreen
+import com.mad.susach.article.ui.ArticleView
 
 sealed class Screen(val route: String) {
     // Auth & Home
@@ -110,17 +108,7 @@ fun AppNavigation() {
             }
         }
 
-        
 
-        composable(
-            route = Screen.ArticleDetail.route,
-            arguments = listOf(navArgument("articleId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val articleId = backStackEntry.arguments?.getString("articleId")
-            if (articleId != null) {
-                ArticleScreen(articleId = articleId, navController = navController)
-            }
-        }
         composable(
             route = Screen.Search.route,
             arguments = listOf(navArgument("query") { defaultValue = ""; type = NavType.StringType })

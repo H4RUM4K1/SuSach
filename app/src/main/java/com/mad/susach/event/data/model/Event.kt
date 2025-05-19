@@ -10,5 +10,5 @@ data class Event(
     val endDate: Int = 0,
     val imageContent: String = "",
     val summary: String = "",
-    var content: String = ""
+    var contents: String = ""
 )

@@ -2,7 +2,6 @@ package com.mad.susach.timeline.ui.timelineview
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mad.susach.article.data.model.Article
 import com.mad.susach.event.data.model.Event
 import com.mad.susach.timeline.data.model.Era
 import com.mad.susach.timeline.data.repository.EraRepository
@@ -23,9 +22,6 @@ class TimelineViewModel(
 
     private val _selectedEvent = MutableStateFlow<Event?>(null)
     val selectedEvent: StateFlow<Event?> = _selectedEvent.asStateFlow()
-
-    private val _selectedArticle = MutableStateFlow<Article?>(null)
-    val selectedArticle: StateFlow<Article?> = _selectedArticle.asStateFlow()
 
     private val _selectedEra = MutableStateFlow<Era?>(null)
     val selectedEra: StateFlow<Era?> = _selectedEra.asStateFlow()
@@ -68,18 +64,7 @@ class TimelineViewModel(
         // Use event.summary or event.content if you want, but Event does not have articleId
         // Remove loadArticleForEvent(event.articleId)
     }
-    
-    private fun loadArticleForEvent(articleId: String) {
-        viewModelScope.launch {
-            // Consider adding loading/error states for article loading specifically
-            try {
-                _selectedArticle.value = repository.getArticleById(articleId)
-            } catch (e: Exception) {
-                // Handle article loading error
-                 _error.value = "Failed to load article: ${e.message}"
-            }
-        }
-    }
+
 
     fun loadEraDetails(id: String) {
         viewModelScope.launch {
@@ -93,6 +78,5 @@ class TimelineViewModel(
 
     fun clearSelectedEvent() {
         _selectedEvent.value = null
-        _selectedArticle.value = null
     }
 }

@@ -176,11 +176,6 @@ fun BottomNavigationBar(navController: NavController) {
             icon = { Icon(Icons.Default.Settings, contentDescription = "Tùy chỉnh") },
             label = { Text("Tùy chỉnh") }
         )
-        NavigationBarItem(
-            selected = false,
-            onClick = { /* Handle More */ },
-            icon = { Icon(Icons.Default.MoreVert, contentDescription = "Khác") },
-            label = { Text("Khác") }
-        )
+
     }
 }
