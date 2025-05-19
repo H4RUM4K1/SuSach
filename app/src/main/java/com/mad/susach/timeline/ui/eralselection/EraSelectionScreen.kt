@@ -8,18 +8,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.fontResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.draw.clip
 import com.mad.susach.timeline.ui.eralselection.components.EraItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -27,13 +20,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.Font
 import com.mad.susach.R
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.wrapContentSize
 import com.mad.susach.timeline.data.model.Era
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EraSelectionScreen(
+    onBack: (String) -> Unit,
     navToTimeline: (eraId: String) -> Unit,
     viewModel: EraSelectionViewModel = viewModel()
 ) {
@@ -53,7 +45,7 @@ fun EraSelectionScreen(
             ) {
                 // Back arrow on the left
                 Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = { navToTimeline("") }) {
+                    IconButton(onClick = { onBack("") }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",

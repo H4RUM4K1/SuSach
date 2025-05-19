@@ -1,8 +1,13 @@
 package com.mad.susach.auth.login.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 data class LoginUiState(
     val isLoading: Boolean = false,
@@ -30,12 +35,18 @@ class LoginViewModel : ViewModel() {
             _uiState.value = LoginUiState(error = errorMessage)
             return
         }
-
-        _uiState.value = _uiState.value.copy(isLoading = true)
-        // TODO: Implement Firebase Auth
-        _uiState.value = _uiState.value.copy(
-            isLoading = false,
-            isSuccess = true
-        )
+        _uiState.value = _uiState.value.copy(isLoading = true, error = null, isSuccess = false)
+        viewModelScope.launch {
+            try {
+                val auth = FirebaseAuth.getInstance()
+                Log.d("LoginViewModel", "Attempting login for $email")
+                val result = auth.signInWithEmailAndPassword(email, password).await()
+                Log.d("LoginViewModel", "Login success: ${'$'}{result.user?.uid}")
+                _uiState.value = _uiState.value.copy(isLoading = false, isSuccess = true, error = null)
+            } catch (e: Exception) {
+                Log.e("LoginViewModel", "Login failed", e)
+                _uiState.value = _uiState.value.copy(isLoading = false, isSuccess = false, error = e.message ?: e.toString())
+            }
+        }
     }
 }

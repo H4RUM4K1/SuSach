@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.navArgument
+import com.google.firebase.auth.FirebaseAuth
 import com.mad.susach.auth.login.ui.LoginContent
 import com.mad.susach.auth.register.ui.RegisterScreen
 import com.mad.susach.main.HomeScreen
@@ -47,9 +48,11 @@ fun AppNavigation() {
         searchQueryState.value = savedQuery
         currentEntry.savedStateHandle.remove<String>("searchQuery")
     }
+    // Check if user is already logged in
+    val isLoggedIn = FirebaseAuth.getInstance().currentUser != null
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route
+        startDestination = if (isLoggedIn) Screen.Home.route else Screen.Login.route
     ) {
         composable(Screen.Login.route) {
             LoginContent(
@@ -88,6 +91,7 @@ fun AppNavigation() {
         }
         composable(Screen.EraSelection.route) {
             EraSelectionScreen(
+                onBack = { navController.popBackStack() },
                 navToTimeline = { eraId ->
                     navController.navigate(Screen.TimelineView.createRoute(eraId))
                 }

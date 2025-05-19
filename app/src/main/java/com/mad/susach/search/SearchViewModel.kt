@@ -49,62 +49,60 @@ class SearchViewModel : ViewModel() {
     }
 
     fun search(query: String) {
+        val normalizedQuery = query.trim().lowercase()
         viewModelScope.launch {
             if (selectedType == "Sự kiện") {
-                val events = db.collection("events")
-                    .whereGreaterThanOrEqualTo("name", query)
-                    .whereLessThanOrEqualTo("name", query + '\uf8ff')
-                    .get().await()
-                val list = events.documents.map { doc ->
-                    val event = doc.toObject(Event::class.java)?.copy(id = doc.id) ?: Event()
-                    SearchResult(
-                        id = event.id,
-                        title = event.name,
-                        year = formatEventDate(event.startDate, event.endDate)
-                    )
+                val events = db.collection("events").get().await()
+                val list = events.documents.mapNotNull { doc ->
+                    val event = doc.toObject(Event::class.java)?.copy(id = doc.id)
+                    if (event != null && event.name.lowercase().contains(normalizedQuery)) {
+                        SearchResult(
+                            id = event.id,
+                            title = event.name,
+                            year = formatEventDate(event.startDate, event.endDate)
+                        )
+                    } else null
                 }
                 _results.value = list
                 sortResults()
             } else if (selectedType == "Bất kì") {
-                // Search both articles and events, merge results
-                val articlesDeferred = db.collection("articles")
-                    .whereGreaterThanOrEqualTo("title", query)
-                    .whereLessThanOrEqualTo("title", query + '\uf8ff')
-                    .get()
-                val eventsDeferred = db.collection("events")
-                    .whereGreaterThanOrEqualTo("name", query)
-                    .whereLessThanOrEqualTo("name", query + '\uf8ff')
-                    .get()
+                val articlesDeferred = db.collection("articles").get()
+                val eventsDeferred = db.collection("events").get()
                 val articles = articlesDeferred.await()
                 val events = eventsDeferred.await()
-                val articleResults = articles.documents.map { doc ->
-                    SearchResult(
-                        id = doc.id,
-                        title = doc.getString("title") ?: "",
-                        year = doc.getString("year") ?: ""
-                    )
+                val articleResults = articles.documents.mapNotNull { doc ->
+                    val title = doc.getString("title") ?: ""
+                    if (title.lowercase().contains(normalizedQuery)) {
+                        SearchResult(
+                            id = doc.id,
+                            title = title,
+                            year = doc.getString("year") ?: ""
+                        )
+                    } else null
                 }
-                val eventResults = events.documents.map { doc ->
-                    val event = doc.toObject(Event::class.java)?.copy(id = doc.id) ?: Event()
-                    SearchResult(
-                        id = event.id,
-                        title = event.name,
-                        year = formatEventDate(event.startDate, event.endDate)
-                    )
+                val eventResults = events.documents.mapNotNull { doc ->
+                    val event = doc.toObject(Event::class.java)?.copy(id = doc.id)
+                    if (event != null && event.name.lowercase().contains(normalizedQuery)) {
+                        SearchResult(
+                            id = event.id,
+                            title = event.name,
+                            year = formatEventDate(event.startDate, event.endDate)
+                        )
+                    } else null
                 }
                 _results.value = articleResults + eventResults
                 sortResults()
             } else {
-                val articles = db.collection("articles")
-                    .whereGreaterThanOrEqualTo("title", query)
-                    .whereLessThanOrEqualTo("title", query + '\uf8ff')
-                    .get().await()
-                val list = articles.documents.map { doc ->
-                    SearchResult(
-                        id = doc.id,
-                        title = doc.getString("title") ?: "",
-                        year = doc.getString("year") ?: ""
-                    )
+                val articles = db.collection("articles").get().await()
+                val list = articles.documents.mapNotNull { doc ->
+                    val title = doc.getString("title") ?: ""
+                    if (title.lowercase().contains(normalizedQuery)) {
+                        SearchResult(
+                            id = doc.id,
+                            title = title,
+                            year = doc.getString("year") ?: ""
+                        )
+                    } else null
                 }
                 _results.value = list
                 sortResults()

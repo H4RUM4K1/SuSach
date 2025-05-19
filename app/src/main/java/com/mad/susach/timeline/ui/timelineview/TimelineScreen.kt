@@ -11,6 +11,8 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.mad.susach.R
 import com.mad.susach.event.data.model.Event
 import com.mad.susach.event.ui.composables.EventItem
@@ -28,17 +30,23 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun TimelineScreen(
     eraId: String,
-    navToEventDetail: (eventId: String) -> Unit,
-    viewModel: TimelineViewModel = viewModel()
+    navToEventDetail: (eventId: String) -> Unit
 ) {
+    val factory = remember(eraId) {
+        TimelineViewModelFactory(eraId = eraId)
+    }
+    val viewModel: TimelineViewModel = viewModel(factory = factory)
     val events by viewModel.events.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
     val selectedEra by viewModel.selectedEra.collectAsState()
 
+    // Only load if eraId is not blank
     LaunchedEffect(eraId) {
-        viewModel.loadEventsForEra(eraId)
-        viewModel.loadEraDetails(eraId)
+        if (eraId.isNotBlank()) {
+            viewModel.loadEventsForEra(eraId)
+            viewModel.loadEraDetails(eraId)
+        }
     }
 
     Scaffold(
@@ -52,15 +60,18 @@ fun TimelineScreen(
                 .padding(paddingValues)
                 .padding(16.dp)
         ) {
-            if (isLoading) {
+            if (eraId.isBlank()) {
+                Text("Vui lòng chọn thời kì để xem timeline.")
+            } else if (isLoading) {
                 Text("Loading events...")
             } else if (error != null) {
                 Text("Error: $error")
             } else if (events.isEmpty()) {
                 Text("No events available for this era.")
             } else {
+                val sortedEvents = events.sortedBy { it.startDate }
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(events) { event ->
+                    items(sortedEvents) { event ->
                         EventItem(event = event, onItemClick = { navToEventDetail(event.id) })
                     }
                 }
@@ -68,82 +79,4 @@ fun TimelineScreen(
         }
     }
 }
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun EraSelectionScreen(
-    viewModel: EraSelectionViewModel = viewModel(),
-    navToTimeline: (eraId: String) -> Unit
-) {
-    val eras by viewModel.eras.collectAsState()
-    val isLoading by viewModel.isLoading.collectAsState()
-    val error by viewModel.error.collectAsState()
-
-    Scaffold(
-        topBar = {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(56.dp)
-                    .padding(top = 16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = { navToTimeline("") }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = Color(0xFF222222)
-                        )
-                    }
-                    Spacer(Modifier.weight(1f))
-                    Text(
-                        text = "Chọn thời kì",
-                        color = Color(0xFFFF6600),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 22.sp,
-                        fontFamily = FontFamily(Font(R.font.sitka_small_semibold)),
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(end = 48.dp)
-                    )
-                    Spacer(Modifier.weight(1f))
-                }
-            }
-        }
-    ) { paddingValues ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .padding(8.dp)) {
-            when {
-                isLoading -> {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-                error != null -> {
-                    Text(
-                        text = error ?: "Unknown error",
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-                eras.isEmpty() -> {
-                    Text(
-                        text = "No eras found.",
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-                else -> {
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
-                        items(eras.size) { idx ->
-                            EraItem(era = eras[idx], onEraClick = { navToTimeline(it) })
-                            Spacer(modifier = Modifier.height(8.dp))
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
 

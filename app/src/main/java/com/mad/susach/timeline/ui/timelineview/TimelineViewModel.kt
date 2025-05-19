@@ -1,6 +1,5 @@
 package com.mad.susach.timeline.ui.timelineview
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mad.susach.article.data.model.Article
@@ -16,10 +15,8 @@ import kotlinx.coroutines.launch
 class TimelineViewModel(
     private val repository: TimelineRepository = TimelineRepository(), // Basic injection
     private val eraRepository: EraRepository = EraRepository(),
-    savedStateHandle: SavedStateHandle
+    val eraId: String = ""
 ) : ViewModel() {
-
-    val eraId: String = savedStateHandle.get<String>("eraId") ?: ""
 
     private val _events = MutableStateFlow<List<Event>>(emptyList())
     val events: StateFlow<List<Event>> = _events.asStateFlow()
@@ -52,8 +49,12 @@ class TimelineViewModel(
             _isLoading.value = true
             _error.value = null
             try {
-                _events.value = repository.getEventsForEra(id)
+                android.util.Log.d("TimelineViewModel", "Fetching events for eraId=$id")
+                val result = repository.getEventsForEra(id)
+                android.util.Log.d("TimelineViewModel", "Fetched events: count=${result.size}, data=$result")
+                _events.value = result
             } catch (e: Exception) {
+                android.util.Log.e("TimelineViewModel", "Failed to fetch events for eraId=$id: ${e.message}", e)
                 _error.value = "Failed to load events: ${e.message}"
             } finally {
                 _isLoading.value = false
