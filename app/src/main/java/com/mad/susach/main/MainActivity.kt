@@ -41,6 +41,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.ui.draw.shadow
 import androidx.navigation.NavController
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,6 +78,7 @@ fun HomeScreen(
     var selectedNav by remember { mutableStateOf(0) }
     var searchText by remember { mutableStateOf("Tìm gì đó...") }
     val context = LocalContext.current
+    val scrollState = rememberScrollState() // Add this
 
     Box(
         Modifier
@@ -87,6 +90,8 @@ fun HomeScreen(
                 .fillMaxWidth(0.84f)
                 .align(Alignment.TopCenter)
                 .padding(horizontal = 0.dp)
+                .verticalScroll(scrollState) // Add this
+                .padding(bottom = 56.dp) // Add padding to avoid overlap with NavBar
         ) {
             Spacer(Modifier.height(30.dp))
 
@@ -160,7 +165,6 @@ fun HomeScreen(
                 onMapClick = {},
                 onRandomClick = {}
             )
-
         }
         MainBottomNavBar(
             selected = selectedNav,
@@ -173,7 +177,7 @@ fun HomeScreen(
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
         )
-        Spacer(Modifier.height(8.dp))
+        // Spacer(Modifier.height(8.dp)) // This Spacer might be redundant if NavBar is aligned to bottom
     }
 }
 

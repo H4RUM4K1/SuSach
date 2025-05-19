@@ -31,6 +31,7 @@ fun MainBottomNavBar(
         context: Context? = null
 ) {
     val ctx = context ?: LocalContext.current
+
     val navItems =
             listOf(
                     Triple("Kiến thức", Icons.AutoMirrored.Filled.MenuBook, Icons.Filled.Book),

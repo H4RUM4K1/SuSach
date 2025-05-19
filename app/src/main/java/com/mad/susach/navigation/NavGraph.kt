@@ -103,11 +103,23 @@ fun AppNavigation() {
             if (eraId != null) {
                 TimelineScreen(
                     eraId = eraId,
-                    navToEventDetail = { /* removed navigation to EventDetailScreen */ }
+                    navToArticle = { articleId -> // Changed from navToEventDetail
+                        navController.navigate(Screen.ArticleDetail.createRoute(articleId))
+                    },
+                    onBack = { navController.popBackStack() } // Add onBack navigation
                 )
             }
         }
 
+        // Standardized Article Detail Route
+        composable(
+            route = Screen.ArticleDetail.route, // Use standardized route from Screen sealed class
+            arguments = listOf(navArgument("articleId") { type = NavType.StringType }) // Use "articleId"
+        ) { backStackEntry ->
+            val articleId = backStackEntry.arguments?.getString("articleId") // Use "articleId"
+            // Assuming ArticleView can take articleId directly, or it's equivalent to eventId
+            ArticleView(eventId = articleId, navController = navController) 
+        }
 
         composable(
             route = Screen.Search.route,
@@ -118,20 +130,15 @@ fun AppNavigation() {
                 initialQuery = query,
                 onBack = { resultQuery ->
                     navController.popBackStack()
-                    // Pass resultQuery back to HomeScreen
                     navController.currentBackStackEntry?.savedStateHandle?.set("searchQuery", resultQuery)
                 },
                 onResultClick = { searchResult ->
-                    navController.navigate("article/${searchResult.id}") }
+                    // Navigate using the standardized article detail route
+                    navController.navigate(Screen.ArticleDetail.createRoute(searchResult.id))
+                }
             )
         }
 
-        composable(
-            route = "article/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val articleId = backStackEntry.arguments?.getString("id")
-            ArticleView(eventId = articleId, navController = navController)
-        }
+
     }
 }
