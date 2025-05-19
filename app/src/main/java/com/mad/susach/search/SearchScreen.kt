@@ -46,7 +46,7 @@ fun SearchScreen(
             IconButton(onClick = { onBack(query) }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
-            
+
             Box(modifier = Modifier.weight(1f)) {
                 OutlinedTextField(
                     value = query,
@@ -78,6 +78,16 @@ fun SearchScreen(
         }
 
         Spacer(Modifier.height(6.dp))
+
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            items(results) { item ->
+                SearchResultRow(item) { result ->
+                    onResultClick(result) 
+                }
+            }
+        }
 
         Row(
             modifier = Modifier

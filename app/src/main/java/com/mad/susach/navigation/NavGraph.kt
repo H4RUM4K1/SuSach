@@ -109,6 +109,9 @@ fun AppNavigation() {
                 )
             }
         }
+
+        
+
         composable(
             route = Screen.ArticleDetail.route,
             arguments = listOf(navArgument("articleId") { type = NavType.StringType })
@@ -130,8 +133,17 @@ fun AppNavigation() {
                     // Pass resultQuery back to HomeScreen
                     navController.currentBackStackEntry?.savedStateHandle?.set("searchQuery", resultQuery)
                 },
-                onResultClick = { /* TODO: handle result click */ }
+                onResultClick = { searchResult ->
+                    navController.navigate("article/${searchResult.id}") }
             )
+        }
+
+        composable(
+            route = "article/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val articleId = backStackEntry.arguments?.getString("id")
+            ArticleView(eventId = articleId, navController = navController)
         }
     }
 }
