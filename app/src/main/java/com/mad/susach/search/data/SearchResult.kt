@@ -1,4 +1,4 @@
-package com.mad.susach.search
+package com.mad.susach.search.data
 
 data class SearchResult(
     val id: String = "",

@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.mad.susach.auth.login.ui.LoginActivity
-import com.mad.susach.profile.viewmodel.ProfileViewModel
 
 class ProfileActivity : ComponentActivity() {
     private val viewModel: ProfileViewModel by viewModels()

@@ -25,8 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.mad.susach.R
-import com.mad.susach.article.viewmodel.ArticleViewModel
- 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ArticleView(eventId: String?, navController: NavController, viewModel: ArticleViewModel = viewModel()) {

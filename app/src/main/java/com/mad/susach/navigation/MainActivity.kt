@@ -1,4 +1,4 @@
-package com.mad.susach.main
+package com.mad.susach.navigation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -30,9 +30,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mad.susach.R
-import com.mad.susach.navigation.AppNavigation
-import com.mad.susach.navigation.MainBottomNavBar
-import com.mad.susach.navigation.Screen
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.foundation.shape.CircleShape
 import androidx.navigation.NavController

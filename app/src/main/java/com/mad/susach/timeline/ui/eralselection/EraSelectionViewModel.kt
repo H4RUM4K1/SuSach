@@ -3,8 +3,8 @@ package com.mad.susach.timeline.ui.eralselection
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mad.susach.timeline.data.model.Era
-import com.mad.susach.timeline.data.repository.EraRepository // Changed from TimelineRepository
+import com.mad.susach.timeline.data.Era
+import com.mad.susach.timeline.data.EraRepository // Changed from TimelineRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

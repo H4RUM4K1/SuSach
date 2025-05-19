@@ -1,8 +1,7 @@
-package com.mad.susach.event.data.repository
+package com.mad.susach.event.data
 
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.mad.susach.event.data.Event
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
 

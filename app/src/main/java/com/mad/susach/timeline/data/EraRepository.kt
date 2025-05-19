@@ -1,11 +1,10 @@
-package com.mad.susach.timeline.data.repository
+package com.mad.susach.timeline.data
 
 import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.mad.susach.event.data.model.Event
-import com.mad.susach.event.data.repository.EventRepository
-import com.mad.susach.timeline.data.Era
+import com.mad.susach.event.data.Event
+import com.mad.susach.event.data.EventRepository
 import kotlinx.coroutines.tasks.await
 
 class EraRepository {

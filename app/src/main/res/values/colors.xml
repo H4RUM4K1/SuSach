@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="orange_icon">#FF6600</color>
+    <color name="orange_text">#D95500</color>
+    <color name="grey_text_button">#4A4A4A</color>
+    <color name="grey_text_fade">#A9A9A9</color>
+    <color name="beige_button">#FFF5E1</color>
+    <color name="white_background">#FFFFFF</color>
+</resources>

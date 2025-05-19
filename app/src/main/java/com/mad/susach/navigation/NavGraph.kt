@@ -12,13 +12,12 @@ import androidx.navigation.navArgument
 import com.google.firebase.auth.FirebaseAuth
 import com.mad.susach.auth.login.ui.LoginContent
 import com.mad.susach.auth.register.ui.RegisterScreen
-import com.mad.susach.main.HomeScreen
 import com.mad.susach.timeline.ui.eralselection.EraSelectionScreen
 import com.mad.susach.timeline.ui.timelineview.TimelineScreen
 import com.mad.susach.article.ui.ArticleView
+import com.mad.susach.search.ui.SearchScreen
 
 sealed class Screen(val route: String) {
-    // Auth & Home
     object Login : Screen("login")
     object Register : Screen("register")
     object Home : Screen("home")
@@ -27,26 +26,30 @@ sealed class Screen(val route: String) {
     object TimelineView : Screen("timeline_view_screen/{eraId}") {
         fun createRoute(eraId: String) = "timeline_view_screen/$eraId"
     }
-    object ArticleDetail : Screen("article_detail_screen/{articleId}") {
-        fun createRoute(articleId: String) = "article_detail_screen/$articleId"
-    }
+    object RandomArticle : Screen("random_article_screen")
+
     object Search : Screen("search/{query}") {
         fun createRoute(query: String) = "search/$query"
     }
+    object ArticleDetail : Screen("article_detail_screen/{articleId}") {
+        fun createRoute(articleId: String) = "article_detail_screen/$articleId"
+    }
+
 }
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val searchQueryState = remember { mutableStateOf("") }
-    // Listen for result from SearchScreen
+
     val currentEntry = navController.currentBackStackEntryAsState().value
+
+    val searchQueryState = remember { mutableStateOf("") }
     val savedQuery = currentEntry?.savedStateHandle?.get<String>("searchQuery")
     if (savedQuery != null && savedQuery != searchQueryState.value) {
         searchQueryState.value = savedQuery
         currentEntry.savedStateHandle.remove<String>("searchQuery")
     }
-    // Check if user is already logged in
+
     val isLoggedIn = FirebaseAuth.getInstance().currentUser != null
     NavHost(
         navController = navController,
@@ -103,10 +106,10 @@ fun AppNavigation() {
             if (eraId != null) {
                 TimelineScreen(
                     eraId = eraId,
-                    navToArticle = { articleId -> // Changed from navToEventDetail
+                    navToArticle = { articleId ->
                         navController.navigate(Screen.ArticleDetail.createRoute(articleId))
                     },
-                    onBack = { navController.popBackStack() } // Add onBack navigation
+                    onBack = { navController.popBackStack() }
                 )
             }
         }
@@ -118,7 +121,11 @@ fun AppNavigation() {
         ) { backStackEntry ->
             val articleId = backStackEntry.arguments?.getString("articleId") // Use "articleId"
             // Assuming ArticleView can take articleId directly, or it's equivalent to eventId
-            ArticleView(eventId = articleId, navController = navController) 
+            ArticleView(eventId = articleId, navController = navController)
+        }
+
+        composable(Screen.RandomArticle.route) { // New composable for random article
+            ArticleView(eventId = "random", navController = navController)
         }
 
         composable(
@@ -126,7 +133,7 @@ fun AppNavigation() {
             arguments = listOf(navArgument("query") { defaultValue = ""; type = NavType.StringType })
         ) { backStackEntry ->
             val query = backStackEntry.arguments?.getString("query") ?: ""
-            com.mad.susach.search.SearchScreen(
+            SearchScreen(
                 initialQuery = query,
                 onBack = { resultQuery ->
                     navController.popBackStack()

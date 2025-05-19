@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.tooling.preview.Preview
-import com.mad.susach.timeline.ui.eralselection.components.EraItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.ui.text.font.FontFamily
@@ -21,7 +20,7 @@ import androidx.compose.ui.text.font.Font
 import com.mad.susach.R
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.layout.wrapContentSize
-import com.mad.susach.timeline.data.model.Era
+import com.mad.susach.timeline.data.Era
 
 @Composable
 fun EraSelectionScreen(
@@ -108,10 +107,10 @@ fun EraSelectionScreen(
 @Composable
 fun EraSelectionScreenPreview() {
     val fakeEras = listOf(
-        Era(id = "1", name = "Thời kỳ cổ đại", description = "Thời kỳ dựng nước đầu tiên của người Việt.", startYear = -2879, endYear = -179),
-        Era(id = "2", name = "Thời kỳ Bắc thuộc", description = null, startYear = -179, endYear = 939),
-        Era(id = "3", name = "Thời kỳ Quân chủ", description = null, startYear = 939, endYear = 1945),
-        Era(id = "4", name = "Thời kỳ hiện đại", description = null, startYear = 1858, endYear = 2025)
+        Era(id = "1", name = "Thời kỳ cổ đại", description = "Thời kỳ dựng nước đầu tiên của người Việt.", startYear = -2879, endYear = -179, imageUrl = "https://example.com/image_co_dai.png"), // Added imageUrl
+        Era(id = "2", name = "Thời kỳ Bắc thuộc", description = null, startYear = -179, endYear = 939, imageUrl = "https://example.com/image_bac_thuoc.png"), // Added imageUrl
+        Era(id = "3", name = "Thời kỳ Quân chủ", description = null, startYear = 939, endYear = 1945, imageUrl = "https://example.com/image_quan_chu.png"), // Added imageUrl
+        Era(id = "4", name = "Thời kỳ hiện đại", description = null, startYear = 1858, endYear = 2025, imageUrl = "https://example.com/image_hien_dai.png") // Added imageUrl
     )
     MaterialTheme {
         Surface(color = Color(0xFFFDF6F0)) {

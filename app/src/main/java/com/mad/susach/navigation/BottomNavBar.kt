@@ -82,7 +82,7 @@ fun MainBottomNavBar(
 private fun handleNavBarNavigation(ctx: Context, index: Int) {
     when (index) {
         0 -> ctx.startActivity(
-            Intent(ctx, com.mad.susach.main.MainActivity::class.java)
+            Intent(ctx, MainActivity::class.java)
         )
         2 -> ctx.startActivity(
             Intent(ctx, com.mad.susach.profile.ui.ProfileActivity::class.java)

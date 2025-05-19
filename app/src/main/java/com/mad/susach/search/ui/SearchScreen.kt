@@ -1,4 +1,4 @@
-package com.mad.susach.search
+package com.mad.susach.search.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.mad.susach.search.data.SearchResult
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

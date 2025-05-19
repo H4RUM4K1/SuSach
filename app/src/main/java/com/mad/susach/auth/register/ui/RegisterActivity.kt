@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import com.mad.susach.main.MainActivity
+import com.mad.susach.navigation.MainActivity
 import com.mad.susach.auth.register.viewmodel.RegisterViewModel
 
 class RegisterActivity : ComponentActivity() {

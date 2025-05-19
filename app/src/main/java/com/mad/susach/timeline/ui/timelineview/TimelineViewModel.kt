@@ -1,18 +1,17 @@
 package com.mad.susach.timeline.ui.timelineview
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.mad.susach.event.data.model.Event
-import com.mad.susach.timeline.data.model.Era
-import com.mad.susach.timeline.data.repository.EraRepository
-import com.mad.susach.timeline.data.repository.TimelineRepository
+import com.mad.susach.event.data.Event
+import com.mad.susach.timeline.data.Era
+import com.mad.susach.timeline.data.EraRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class TimelineViewModel(
-    private val repository: TimelineRepository = TimelineRepository(), // Basic injection
     private val eraRepository: EraRepository = EraRepository(),
     val eraId: String = ""
 ) : ViewModel() {
@@ -46,7 +45,7 @@ class TimelineViewModel(
             _error.value = null
             try {
                 android.util.Log.d("TimelineViewModel", "Fetching events for eraId=$id")
-                val result = repository.getEventsForEra(id)
+                val result = eraRepository.getEventsForEra(id)
                 android.util.Log.d("TimelineViewModel", "Fetched events: count=${result.size}, data=$result")
                 _events.value = result
             } catch (e: Exception) {
@@ -78,5 +77,20 @@ class TimelineViewModel(
 
     fun clearSelectedEvent() {
         _selectedEvent.value = null
+    }
+
+    companion object {
+        fun provideFactory(
+            eraRepository: EraRepository,
+            eraId: String
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                if (modelClass.isAssignableFrom(TimelineViewModel::class.java)) {
+                    return TimelineViewModel(eraRepository, eraId) as T
+                }
+                throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+            }
+        }
     }
 }

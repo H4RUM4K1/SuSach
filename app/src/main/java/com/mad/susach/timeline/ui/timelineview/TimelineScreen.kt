@@ -14,14 +14,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mad.susach.R
-import com.mad.susach.event.data.model.Event
-import com.mad.susach.event.ui.composables.EventItem
-import com.mad.susach.timeline.data.model.Era
+import com.mad.susach.event.data.Event
+import com.mad.susach.timeline.data.Era
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.mad.susach.timeline.data.EraRepository
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,7 +34,7 @@ fun TimelineScreenUI(
     onEventClick: (String) -> Unit,
     onNavigateToArticle: (String) -> Unit,
     modifier: Modifier = Modifier,
-    eraIdForDisplay: String // Used to check if an era has been selected
+    eraIdForDisplay: String 
 ) {
     Scaffold(
         modifier = modifier,
@@ -43,8 +42,8 @@ fun TimelineScreenUI(
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .height(56.dp) // Standard AppBar height
-                    .padding(top = 16.dp), // Add top padding
+                    .height(56.dp)
+                    .padding(top = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Row(Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
@@ -66,9 +65,9 @@ fun TimelineScreenUI(
                         modifier = Modifier
                             .fillMaxSize()
                             .wrapContentSize(Alignment.Center)
-                            .padding(end = 48.dp) // Adjust padding to truly center if back button takes space
+                            .padding(end = 48.dp)
                     )
-                    Spacer(Modifier.weight(1f)) // Ensure title is centered by balancing spacers
+                    Spacer(Modifier.weight(1f))
                 }
             }
         }
@@ -76,8 +75,8 @@ fun TimelineScreenUI(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues) // Apply Scaffold's padding (e.g. for status bar)
-                .padding(start = 30.dp, end = 8.dp) // Global start padding for all content below TopAppBar
+                .padding(paddingValues)
+                .padding(start = 30.dp, end = 8.dp)
         ) {
             if (eraIdForDisplay.isBlank()) {
                 Text("Vui lòng chọn thời kì để xem timeline.", modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp))
@@ -88,18 +87,16 @@ fun TimelineScreenUI(
             } else if (events.isEmpty()) {
                 Text("No events available for this era.", modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp))
             } else {
-                Box(modifier = Modifier.fillMaxSize()) { // Box to layer Line and LazyColumn
+                Box(modifier = Modifier.fillMaxSize()) {
                     val lineThickness = 2.dp
-                    // EventTimelineCircle is now always 26.dp wide. Its center is at 13.dp.
                     val lineStartX = (26.dp / 2) - (lineThickness / 2)
-
-                    // Vertical Timeline - drawn behind the LazyColumn items
+                    // Vertical line for timeline
                     Box(
                         modifier = Modifier
                             .fillMaxHeight()
-                            .padding(start = lineStartX) // Position line relative to the start of this Box
+                            .padding(start = lineStartX)
                             .width(lineThickness)
-                            .background(Color(0xFFFF6600)) // Orange color for the line
+                            .background(Color(0xFFFF6600))
                     )
 
                     val sortedEvents = events.sortedBy { it.startDate }
@@ -128,22 +125,13 @@ fun TimelineScreen(
     eraId: String,
     navToArticle: (articleId: String) -> Unit,
     onBack: () -> Unit,
-    viewModelFactory: androidx.lifecycle.ViewModelProvider.Factory? = null
+    viewModelFactory: androidx.lifecycle.ViewModelProvider.Factory? = null // Parameter can be kept for testing or specific overrides
 ) {
     val factory = viewModelFactory ?: remember(eraId) {
-        object : androidx.lifecycle.ViewModelProvider.Factory {
-            override fun <T : androidx.lifecycle.ViewModel> create(modelClass: Class<T>): T {
-                if (modelClass.isAssignableFrom(TimelineViewModel::class.java)) {
-                              @Suppress("UNCHECKED_CAST")
-                    return TimelineViewModel(
-                        repository = com.mad.susach.timeline.data.repository.TimelineRepository(), 
-                        eraRepository = com.mad.susach.timeline.data.repository.EraRepository(), 
-                        eraId = eraId
-                    ) as T
-                }
-                throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
-            }
-        }
+        TimelineViewModel.provideFactory(
+            eraRepository = EraRepository(),       // Consider using DI
+            eraId = eraId
+        )
     }
     val viewModel: TimelineViewModel = viewModel(factory = factory)
 

@@ -1,4 +1,4 @@
-package com.mad.susach.timeline.ui.eralselection.components
+package com.mad.susach.timeline.ui.timelineview
 
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.Image // Added import for Image
@@ -26,7 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mad.susach.R // Import R class for color resources
-import com.mad.susach.event.data.model.Event
+import com.mad.susach.event.data.Event
 
 @Composable
 fun EventTimelineCircle(isSelected: Boolean, modifier: Modifier = Modifier) {

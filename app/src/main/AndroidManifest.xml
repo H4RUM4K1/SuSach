@@ -9,7 +9,7 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar"
         android:name=".SuSachApp">
         <activity 
-            android:name=".main.MainActivity"
+            android:name=".navigation.MainActivity"
             android:exported="true" />
         <activity 
             android:name=".auth.login.ui.LoginActivity"

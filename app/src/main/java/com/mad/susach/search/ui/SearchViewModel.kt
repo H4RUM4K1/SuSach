@@ -1,4 +1,4 @@
-package com.mad.susach.search
+package com.mad.susach.search.ui
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -6,8 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mad.susach.event.data.model.Event
-import com.mad.susach.event.data.repository.EventRepository
+import com.mad.susach.event.data.Event
+import com.mad.susach.event.data.EventRepository
+import com.mad.susach.search.data.SearchResult
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
