@@ -18,28 +18,23 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
+
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mad.susach.R
 import com.mad.susach.navigation.AppNavigation
 import com.mad.susach.navigation.MainBottomNavBar
 import com.mad.susach.navigation.Screen
-import com.mad.susach.timeline.ui.eralselection.EraSelectionScreen
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.ui.draw.shadow
 import androidx.navigation.NavController
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.rememberScrollState
@@ -61,7 +56,7 @@ fun HomeScreen(
     onSearchClick: (String) -> Unit,
     navController: NavController
 ) {
-    val Saved = remember {
+    val saved = remember {
         listOf(
             SavedItem(
                 title = "Chiến Dịch Hồ Chí Minh",
@@ -75,7 +70,7 @@ fun HomeScreen(
             )
         )
     }
-    var selectedNav by remember { mutableStateOf(0) }
+    var selectedNav by remember { mutableIntStateOf(0) }
     var searchText by remember { mutableStateOf("Tìm gì đó...") }
     val context = LocalContext.current
     val scrollState = rememberScrollState() // Add this
@@ -102,7 +97,7 @@ fun HomeScreen(
                     text = "Hôm nay bạn muốn\ntìm hiểu gì, $username?",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily(Font(com.mad.susach.R.font.sitka_small_semibold)),
+                    fontFamily = FontFamily(Font(R.font.sitka_small_semibold)),
                     modifier = Modifier.weight(1f)
                 )
                 
@@ -150,7 +145,7 @@ fun HomeScreen(
 
             Spacer(Modifier.height(12.dp))
 
-            SavedCarousel(items = Saved, onClick = onNotificationClick)
+            SavedCarousel(items = saved, onClick = onNotificationClick)
 
             Spacer(Modifier.height(12.dp))
 
@@ -160,17 +155,19 @@ fun HomeScreen(
 
             ExploreSection(
                 onTimelineClick = {
-                    navController.navigate(com.mad.susach.navigation.Screen.EraSelection.route)
+                    navController.navigate(Screen.EraSelection.route)
                 },
                 onMapClick = {},
-                onRandomClick = {}
+                onRandomClick = {
+                    navController.navigate(Screen.RandomArticle.route) // Correctly use navController here
+                }
             )
         }
         MainBottomNavBar(
             selected = selectedNav,
             onSelected = {
                 selectedNav = it
-                onNotificationClick() // Call with no arguments
+                onNotificationClick()
             },
             context = context,
             modifier = Modifier
@@ -284,7 +281,7 @@ fun SavedCard(item: SavedItem, onClick: () -> Unit) {
 fun ExploreSection(
     onTimelineClick: () -> Unit,
     onMapClick: () -> Unit,
-    onRandomClick: () -> Unit
+    onRandomClick: () -> Unit // navController is not needed as a param here if onRandomClick handles navigation
 ) {
     Column(
         modifier = Modifier
@@ -367,7 +364,7 @@ fun ExploreSection(
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1f)
-                    .clickable { onRandomClick() },
+                    .clickable { onRandomClick() }, 
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFFFF6600)),
                 elevation = CardDefaults.cardElevation(8.dp)
@@ -382,7 +379,7 @@ fun ExploreSection(
                         painter = painterResource(id = R.drawable.ex3),
                         contentDescription = null,
                         modifier = Modifier
-                            .size(90.dp)
+                            .size(84.dp)
                             .padding(horizontal = 12.dp)
                     )
                     Text(

@@ -9,11 +9,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
-import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -36,7 +34,11 @@ fun ArticleView(eventId: String?, navController: NavController, viewModel: Artic
 
     LaunchedEffect(eventId) {
         if (eventId != null) {
-            viewModel.fetchEvent(eventId)
+            if (eventId == "random") {
+                viewModel.fetchRandomEvent()
+            } else {
+                viewModel.fetchEvent(eventId)
+            }
         }
     }
 

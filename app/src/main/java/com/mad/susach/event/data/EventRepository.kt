@@ -1,39 +1,33 @@
 package com.mad.susach.event.data.repository
 
-import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.mad.susach.event.data.model.Event
+import com.mad.susach.event.data.Event
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.tasks.await
 
-// Repository for events
 class EventRepository {
     private val db = Firebase.firestore
 
-    // Fetches an event by ID
+    // Fetch by IDI
     suspend fun getEventById(eventId: String): Event? {
         return try {
             val doc = db.collection("events").document(eventId).get().await()
             val event = doc.toObject(Event::class.java)?.copy(id = doc.id)
-            Log.d("EventRepository", "Fetched event by id $eventId: $event")
             event
         } catch (e: Exception) {
-            Log.e("EventRepository", "Error fetching event by id $eventId", e)
             null
         }
     }
 
-    // Fetches an event by name
+    // Fetch by name
     suspend fun getEventByName(name: String): Event? {
         return try {
             val query = db.collection("events").whereEqualTo("name", name).get().await()
             val doc = query.documents.firstOrNull() ?: return null
             val event = doc.toObject(Event::class.java)?.copy(id = doc.id)
-            Log.d("EventRepository", "Fetched event by name $name: $event")
             event
         } catch (e: Exception) {
-            Log.e("EventRepository", "Error fetching event by name $name", e)
             null
         }
     }
@@ -43,12 +37,23 @@ class EventRepository {
         return try {
             val query = db.collection("events").whereEqualTo("eraId", eraId).get().await()
             val events = query.documents.mapNotNull { it.toObject(Event::class.java)?.copy(id = it.id) }
-            Log.d("EventRepository", "Fetched events for era $eraId: $events")
             events
         } catch (e: Exception) {
-            Log.e("EventRepository", "Error fetching events for era $eraId", e)
             emptyList()
         }
+    }
+
+    suspend fun getRandomEvent(): Event? = try {
+        val allEvents = db.collection("events").get().await()
+        if (allEvents.isEmpty) {
+            null
+        } else {
+            val randomIndex = (0 until allEvents.size()).random()
+            val randomDocument = allEvents.documents[randomIndex]
+            randomDocument.toObject(Event::class.java)?.copy(id = randomDocument.id)
+        }
+    } catch (e: Exception) {
+        null
     }
 
     // Placeholder function to simulate network delay

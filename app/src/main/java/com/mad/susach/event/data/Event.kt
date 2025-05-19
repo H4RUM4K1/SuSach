@@ -1,4 +1,4 @@
-package com.mad.susach.event.data.model
+package com.mad.susach.event.data
 
 data class Event(
     val id: String = "",

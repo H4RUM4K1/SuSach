@@ -3,12 +3,15 @@ package com.mad.susach.timeline.data.repository
 import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.mad.susach.timeline.data.model.Era
+import com.mad.susach.event.data.model.Event
+import com.mad.susach.event.data.repository.EventRepository
+import com.mad.susach.timeline.data.Era
 import kotlinx.coroutines.tasks.await
 
 class EraRepository {
 
     private val db = Firebase.firestore
+    private val eventRepository = EventRepository()
 
     suspend fun getEras(): List<Era> {
         return try {
@@ -33,6 +36,17 @@ class EraRepository {
         } catch (e: Exception) {
             Log.e("EraRepository", "Error fetching era by id $id", e)
             null
+        }
+    }
+
+    suspend fun getEventsForEra(eraId: String): List<Event> {
+        return try {
+            val events = eventRepository.getEventsForEra(eraId)
+            Log.d("EraRepository", "Fetched events for era $eraId: $events")
+            events
+        } catch (e: Exception) {
+            Log.e("EraRepository", "Error fetching events for era $eraId", e)
+            emptyList()
         }
     }
 }

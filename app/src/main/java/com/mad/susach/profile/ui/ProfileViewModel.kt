@@ -1,4 +1,4 @@
-package com.mad.susach.profile.viewmodel
+package com.mad.susach.profile.ui
 
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth

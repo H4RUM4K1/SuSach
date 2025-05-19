@@ -1,6 +1,7 @@
-package com.mad.susach.event.ui.composables
+package com.mad.susach.timeline.ui.eralselection.components
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Image // Added import for Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.BorderStroke
@@ -11,22 +12,25 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember // Added import for remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource // Added for painterResource
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import com.mad.susach.R // Import R class for color resources
 import com.mad.susach.event.data.model.Event
 
 @Composable
 fun EventTimelineCircle(isSelected: Boolean, modifier: Modifier = Modifier) {
-    val circleColor = Color(0xFFFF6600) // Orange
+    val circleColor = colorResource(id = R.color.orange_icon) // Use color from XML
     val outerSize = 26.dp // Consistent outer size for layout calculations and alignment
     val innerCircleSize = 16.dp
     val borderSize = 2.dp
@@ -43,20 +47,20 @@ fun EventTimelineCircle(isSelected: Boolean, modifier: Modifier = Modifier) {
             Box(
                 modifier = Modifier
                     .matchParentSize() // Fills the 26.dp outer size
-                    .border(BorderStroke(borderSize, circleColor), CircleShape)
+                    .border(BorderStroke(borderSize, brush = SolidColor(circleColor)), CircleShape) // Explicitly use SolidColor for brush
             )
             // Inner circle, centered within the outerSize
             Box(
                 modifier = Modifier
                     .size(innerCircleSize)
-                    .background(circleColor, CircleShape)
+                    .background(color = circleColor, shape = CircleShape) // Explicitly use color parameter
             )
         } else {
             // Default solid circle, centered within the outerSize
             Box(
                 modifier = Modifier
                     .size(innerCircleSize)
-                    .background(circleColor, CircleShape)
+                    .background(color = circleColor, shape = CircleShape) // Explicitly use color parameter
             )
         }
     }
@@ -101,13 +105,13 @@ fun EventItem(
                                 fontWeight = if (isSelected) FontWeight.Bold else FontWeight.SemiBold,
                                 fontSize = if (isSelected) 18.sp else 16.sp
                             ),
-                            color = if (isSelected) Color(0xFFD95500) else MaterialTheme.colorScheme.onSurface
+                            color = if (isSelected) colorResource(id = R.color.orange_text) else MaterialTheme.colorScheme.onSurface
                         )
                         Spacer(modifier = Modifier.height(2.dp))
                         Text(
                             text = formatEventDate(event.startDate, event.endDate),
                             style = MaterialTheme.typography.bodySmall,
-                            color = if (isSelected) Color(0xFFD95500).copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
+                            color = if (isSelected) colorResource(id = R.color.orange_text).copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     if (isSelected) {
@@ -115,13 +119,33 @@ fun EventItem(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                 contentDescription = "Navigate to article",
-                                tint = Color(0xFFFF6600) // Changed to orange Color(0xFFFF6600)
+                                tint = colorResource(id = R.color.orange_icon) // Use color from XML
                             )
                         }
                     }
                 }
 
                 if (isSelected) {
+                    // Image display section - only shown if imageURL is not blank AND item is selected
+                    if (event.imageURL.isNotBlank()) {
+                        Spacer(modifier = Modifier.height(8.dp)) // Add some space before the image
+                        val context = LocalContext.current
+                        val imageResId = remember(event.imageURL, context) {
+                            val id = context.resources.getIdentifier(event.imageURL, "drawable", context.packageName)
+                            if (id != 0) id else android.R.drawable.ic_menu_gallery // Fallback placeholder
+                        }
+
+                        Image(
+                            painter = painterResource(id = imageResId),
+                            contentDescription = event.name,
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(150.dp) // You can adjust the height as needed
+                                .clip(MaterialTheme.shapes.medium)
+                        )
+                    }
+
                     // Conditionally display Description section
                     if (event.description.isNotBlank()) {
                         Spacer(modifier = Modifier.height(12.dp))
@@ -139,7 +163,7 @@ fun EventItem(
 
                     // Conditionally display Summary section
                     if (event.summary.isNotBlank()) {
-                        Spacer(modifier = Modifier.height(if (event.description.isNotBlank()) 8.dp else 12.dp)) // Adjust spacer based on description presence
+                        Spacer(modifier = Modifier.height(if (event.description.isNotBlank() || event.imageURL.isNotBlank()) 8.dp else 12.dp)) // Adjust spacer
                         Text(
                             text = "Tóm tắt:",
                             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
@@ -147,28 +171,7 @@ fun EventItem(
                         )
                         Text(
                             text = event.summary,
-                            style = MaterialTheme.typography.bodyMedium,
-                            maxLines = 3 // Limit lines for summary
-                        )
-                    }
-
-                    if (event.imageURL.isNotBlank()) {
-                        // Adjust spacer based on description or summary presence
-                        val spacerHeight = if (event.description.isNotBlank() || event.summary.isNotBlank()) 8.dp else 12.dp
-                        Spacer(modifier = Modifier.height(spacerHeight))
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(event.imageURL)
-                                .crossfade(true)
-                                .build(),
-                            placeholder = null,
-                            contentDescription = event.name,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(150.dp)
-                                .padding(top = 8.dp)
-                                .clip(MaterialTheme.shapes.medium) // Clip image corners
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }
@@ -177,7 +180,6 @@ fun EventItem(
     }
 }
 
-// Helper function for formatting event dates
 fun formatEventDate(start: Int, end: Int): String {
     val startYear = if (start < 0) "${-start} TCN" else start.toString()
     val endYear = if (end < 0) "${-end} TCN" else end.toString()
