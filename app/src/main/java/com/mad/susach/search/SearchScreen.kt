@@ -41,10 +41,12 @@ fun SearchScreen(
             .padding(horizontal = 16.dp)
     ) {
         Spacer(Modifier.height(16.dp))
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = { onBack(query) }) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
+            
             Box(modifier = Modifier.weight(1f)) {
                 OutlinedTextField(
                     value = query,
@@ -59,12 +61,6 @@ fun SearchScreen(
                         .heightIn(min = 44.dp),
                     singleLine = true,
                     shape = RoundedCornerShape(22.dp),
-                    // colors = OutlinedTextFieldDefaults.textFieldColors(
-                    //     focusedBorderColor = Color(0xFFFF6600),
-                    //     unfocusedBorderColor = Color(0x33FF6600),
-                    //     containerColor = Color.White
-                    // ),
-                    // Compose Material3 1.2.1 does not support custom colors for OutlinedTextField via OutlinedTextFieldDefaults. Use default colors or update Compose version for color customization.
                     trailingIcon = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             if (query.isNotEmpty()) {
