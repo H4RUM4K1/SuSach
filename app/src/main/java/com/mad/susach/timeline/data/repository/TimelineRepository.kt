@@ -1,6 +1,6 @@
 package com.mad.susach.timeline.data.repository
 
-import com.mad.susach.article.data.model.Article // Assuming Article model is in article feature
+//import com.mad.susach.article.data.model.Article // Assuming Article model is in article feature
 import com.mad.susach.timeline.data.model.Era
 import com.mad.susach.event.data.repository.EventRepository // Corrected import
 import com.mad.susach.event.data.model.Event // Corrected import
@@ -18,12 +18,12 @@ class TimelineRepository {
     // Inject or get an instance of EventRepository
     // For simplicity, creating an instance here. In a real app, use DI.
     private val eventRepository = EventRepository()
-    private val articles = listOf(
-        Article(id = "a1", title = "Kinh Dương Vương và Nước Xích Quỷ", content = "Chi tiết về Kinh Dương Vương và nước Xích Quỷ..."),
-        Article(id = "a2", title = "An Dương Vương và Nước Âu Lạc", content = "Chi tiết về An Dương Vương và nước Âu Lạc, thành Cổ Loa..."),
-        Article(id = "a3", title = "Khởi Nghĩa Hai Bà Trưng", content = "Diễn biến và ý nghĩa của cuộc khởi nghĩa Hai Bà Trưng...")
-        // Add more articles
-    )
+//    private val articles = listOf(
+//        Article(id = "a1", title = "Kinh Dương Vương và Nước Xích Quỷ", content = "Chi tiết về Kinh Dương Vương và nước Xích Quỷ..."),
+//        Article(id = "a2", title = "An Dương Vương và Nước Âu Lạc", content = "Chi tiết về An Dương Vương và nước Âu Lạc, thành Cổ Loa..."),
+//        Article(id = "a3", title = "Khởi Nghĩa Hai Bà Trưng", content = "Diễn biến và ý nghĩa của cuộc khởi nghĩa Hai Bà Trưng...")
+//        // Add more articles
+//    )
 
     fun getEras(): List<Era> {
         return eras
@@ -36,14 +36,14 @@ class TimelineRepository {
 
     // This method might be removed if Article handling is fully in ArticleRepository
     // Or it could fetch from an ArticleRepository if needed for timeline-specific logic
-    fun getArticleById(articleId: String): Article? {
-        // TODO: Decide if this should delegate to an ArticleRepository
-        return articles.find { it.id == articleId }
-    }
-
-    fun getEraById(eraId: String): Era? {
-        return eras.find { it.id == eraId }
-    }
+//    fun getArticleById(articleId: String): Article? {
+//        // TODO: Decide if this should delegate to an ArticleRepository
+//        return articles.find { it.id == articleId }
+//    }
+//
+//    fun getEraById(eraId: String): Era? {
+//        return eras.find { it.id == eraId }
+//    }
 
     // getEventById is now in EventRepository, TimelineRepository doesn't need it directly
     // unless there's specific timeline logic when fetching a single event.
