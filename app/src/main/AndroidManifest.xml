@@ -22,5 +22,9 @@
         <activity 
             android:name=".auth.register.ui.RegisterActivity"
             android:exported="true" />
+        <activity 
+            android:name=".profile.ui.ProfileActivity"
+            android:exported="true"
+            android:launchMode="singleTop" />
     </application>
 </manifest>

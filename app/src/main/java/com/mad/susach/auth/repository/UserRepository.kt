@@ -2,7 +2,7 @@ package com.mad.susach.auth.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mad.susach.auth.model.User
+import com.mad.susach.model.User  // Change import to use the main User model
 import kotlinx.coroutines.tasks.await
 
 class UserRepository {
@@ -29,6 +29,28 @@ class UserRepository {
         } catch (e: Exception) {
             Result.failure(e)
         }
+
+    suspend fun updateUserProfile(user: User): Result<Unit> = 
+        try {
+            firestore.collection("users")
+                .document(user.id)
+                .set(user)
+                .await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+
+    suspend fun getUserProfile(userId: String): Result<User> {
+        return try {
+            val document = firestore.collection("users").document(userId).get().await()
+            val user = document.toObject(User::class.java)
+                ?: throw Exception("User not found")
+            Result.success(user)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 
     fun getCurrentUser(): User? {
         val firebaseUser = auth.currentUser ?: return null
