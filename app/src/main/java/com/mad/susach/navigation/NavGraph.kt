@@ -114,17 +114,15 @@ fun AppNavigation() {
             }
         }
 
-        // Standardized Article Detail Route
         composable(
-            route = Screen.ArticleDetail.route, // Use standardized route from Screen sealed class
-            arguments = listOf(navArgument("articleId") { type = NavType.StringType }) // Use "articleId"
+            route = Screen.ArticleDetail.route,
+            arguments = listOf(navArgument("articleId") { type = NavType.StringType })
         ) { backStackEntry ->
-            val articleId = backStackEntry.arguments?.getString("articleId") // Use "articleId"
-            // Assuming ArticleView can take articleId directly, or it's equivalent to eventId
+            val articleId = backStackEntry.arguments?.getString("articleId")
             ArticleView(eventId = articleId, navController = navController)
         }
 
-        composable(Screen.RandomArticle.route) { // New composable for random article
+        composable(Screen.RandomArticle.route) {
             ArticleView(eventId = "random", navController = navController)
         }
 

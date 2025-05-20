@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter // Added Coil import
 import com.mad.susach.R // Import R class for color resources
 import com.mad.susach.event.data.Event
 
@@ -130,20 +131,37 @@ fun EventItem(
                     if (event.imageURL.isNotBlank()) {
                         Spacer(modifier = Modifier.height(8.dp)) // Add some space before the image
                         val context = LocalContext.current
-                        val imageResId = remember(event.imageURL, context) {
-                            val id = context.resources.getIdentifier(event.imageURL, "drawable", context.packageName)
-                            if (id != 0) id else android.R.drawable.ic_menu_gallery // Fallback placeholder
-                        }
+                        val isNetworkUrl = event.imageURL.startsWith("http://") || event.imageURL.startsWith("https://")
 
-                        Image(
-                            painter = painterResource(id = imageResId),
-                            contentDescription = event.name,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(150.dp) // You can adjust the height as needed
-                                .clip(MaterialTheme.shapes.medium)
-                        )
+                        if (isNetworkUrl) {
+                            Image(
+                                painter = rememberAsyncImagePainter(
+                                    model = event.imageURL,
+                                    placeholder = painterResource(id = R.drawable.haibatrung), // Default placeholder
+                                    error = painterResource(id = R.drawable.haibatrung) // Default error image
+                                ),
+                                contentDescription = event.name,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(150.dp) 
+                                    .clip(MaterialTheme.shapes.medium)
+                            )
+                        } else {
+                            val imageResId = remember(event.imageURL, context) {
+                                val id = context.resources.getIdentifier(event.imageURL, "drawable", context.packageName)
+                                if (id != 0) id else R.drawable.haibatrung // Fallback placeholder
+                            }
+                            Image(
+                                painter = painterResource(id = imageResId),
+                                contentDescription = event.name,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(150.dp) 
+                                    .clip(MaterialTheme.shapes.medium)
+                            )
+                        }
                     }
 
                     // Conditionally display Description section
@@ -157,6 +175,7 @@ fun EventItem(
                         Text(
                             text = event.description,
                             style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant, // Added color
                             maxLines = 5 // Limit lines for description
                         )
                     }
@@ -171,7 +190,8 @@ fun EventItem(
                         )
                         Text(
                             text = event.summary,
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant // Added color
                         )
                     }
                 }
