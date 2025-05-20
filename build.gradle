@@ -1,15 +1,10 @@
 buildscript {
-    ext {
-        compose_version = '1.5.1'
-        kotlin_version = '1.8.20'
-        agp_version = '8.1.2'  // Update to supported version
-    }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:$agp_version"
+        classpath 'com.android.tools.build:gradle:8.9.2'
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.22'
         classpath 'com.google.gms:google-services:4.4.1'
     }

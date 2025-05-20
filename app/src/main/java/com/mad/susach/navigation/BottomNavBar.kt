@@ -81,16 +81,12 @@ fun MainBottomNavBar(
 
 private fun handleNavBarNavigation(ctx: Context, index: Int) {
     when (index) {
-        0 -> {
-            val intent = Intent(ctx, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            ctx.startActivity(intent)
-        }
-        2 -> {
-            val intent = Intent(ctx, com.mad.susach.profile.ui.ProfileActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-            ctx.startActivity(intent)
-        }
+        0 -> ctx.startActivity(
+            Intent(ctx, MainActivity::class.java)
+        )
+        2 -> ctx.startActivity(
+            Intent(ctx, com.mad.susach.profile.ui.ProfileActivity::class.java)
+        )
     }
 }
 
