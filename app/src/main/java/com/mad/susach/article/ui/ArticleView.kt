@@ -7,6 +7,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.material.icons.filled.Home
@@ -53,6 +55,16 @@ fun ArticleView(eventId: String?, navController: NavController, viewModel: Artic
                 actions = {
                     IconButton(onClick = { /* Handle share */ }) {
                         Icon(Icons.Default.Share, contentDescription = "Share")
+                    }
+                    IconButton(onClick = { 
+                        uiState.event?.id?.let { eventId ->
+                            viewModel.toggleSavePost(eventId)
+                        }
+                    }) {
+                        Icon(
+                            imageVector = if (uiState.isSaved) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,
+                            contentDescription = if (uiState.isSaved) "Unsave Post" else "Save Post"
+                        )
                     }
                 }
             )
