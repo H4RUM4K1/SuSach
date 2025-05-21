@@ -18,7 +18,7 @@ import com.mad.susach.article.ui.ArticleView
 import com.mad.susach.search.ui.SearchScreen
 
 sealed class Screen(val route: String) {
-    object Login : Screen("login")
+    data object Login : Screen("login")
     object Register : Screen("register")
     object Home : Screen("home")
 
@@ -101,26 +101,23 @@ fun AppNavigation() {
         composable(
             route = Screen.TimelineView.route,
             arguments = listOf(navArgument("eraId") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val eraId = backStackEntry.arguments?.getString("eraId")
-            if (eraId != null) {
-                TimelineScreen(
-                    eraId = eraId,
-                    navToArticle = { articleId ->
-                        navController.navigate(Screen.ArticleDetail.createRoute(articleId))
-                    },
-                    onBack = { navController.popBackStack() }
-                )
-            }
+        ) {
+            val eraId = it.arguments?.getString("eraId") ?: ""
+            TimelineScreen(
+                eraId = eraId,
+                navToArticle = { eventId: String ->
+                    navController.navigate(Screen.ArticleDetail.createRoute(eventId))
+                },
+                onBack = { navController.popBackStack() }
+            )
         }
+        
 
-        // Standardized Article Detail Route
         composable(
             route = Screen.ArticleDetail.route, // Use standardized route from Screen sealed class
             arguments = listOf(navArgument("articleId") { type = NavType.StringType }) // Use "articleId"
         ) { backStackEntry ->
             val articleId = backStackEntry.arguments?.getString("articleId") // Use "articleId"
-            // Assuming ArticleView can take articleId directly, or it's equivalent to eventId
             ArticleView(eventId = articleId, navController = navController)
         }
 
@@ -128,24 +125,31 @@ fun AppNavigation() {
             ArticleView(eventId = "random", navController = navController)
         }
 
+
         composable(
-            route = Screen.Search.route,
-            arguments = listOf(navArgument("query") { defaultValue = ""; type = NavType.StringType })
+                Screen.Search.route,
+                arguments =
+                        listOf(
+                                navArgument("query") {
+                                    type = NavType.StringType
+                                    nullable = true
+                                }
+                        )
         ) { backStackEntry ->
             val query = backStackEntry.arguments?.getString("query") ?: ""
             SearchScreen(
-                initialQuery = query,
-                onBack = { resultQuery ->
-                    navController.popBackStack()
-                    navController.currentBackStackEntry?.savedStateHandle?.set("searchQuery", resultQuery)
-                },
-                onResultClick = { searchResult ->
-                    // Navigate using the standardized article detail route
-                    navController.navigate(Screen.ArticleDetail.createRoute(searchResult.id))
-                }
+                    initialQuery = query,
+                    onBack = { currentSearchQuery: String ->
+                        navController.previousBackStackEntry?.savedStateHandle?.set(
+                                "searchQuery",
+                                currentSearchQuery
+                        )
+                        navController.popBackStack()
+                    },
+                    onResultClick = { eventId: String ->
+                        navController.navigate(Screen.ArticleDetail.createRoute(eventId))
+                    }
             )
         }
-
-
     }
 }

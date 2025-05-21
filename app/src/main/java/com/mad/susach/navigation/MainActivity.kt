@@ -38,7 +38,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            AppNavigation()
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = Color(0xFFfffbff) // Changed background color
+            ) {
+                AppNavigation()
+            }
         }
     }
 }

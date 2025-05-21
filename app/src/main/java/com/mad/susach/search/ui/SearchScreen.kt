@@ -5,40 +5,40 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.NorthEast
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.foundation.shape.RoundedCornerShape
-import com.mad.susach.search.data.SearchResult
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchScreen(
     initialQuery: String = "",
     onBack: (String) -> Unit,
-    onResultClick: (SearchResult) -> Unit,
+    onResultClick: (String) -> Unit, 
     viewModel: SearchViewModel = viewModel()
 ) {
     var query by remember { mutableStateOf(initialQuery) }
-    val results by viewModel.results.collectAsState()
+    val results by viewModel.results.collectAsState() 
+    // val eras by viewModel.eras.collectAsState() // eras is directly accessed from viewModel.eras.value in FilterDropdown
+    // val selectedEraId by remember { derivedStateOf { viewModel.selectedEraId } } // selectedEraId is directly accessed
+    // val selectedSort by remember { derivedStateOf { viewModel.selectedSort } } // selectedSort is directly accessed
 
     Column(
         Modifier
             .fillMaxSize()
-            .background(Color(0xFFFDF6F0))
+            .background(Color(0xFFfffbff)) // Changed background color
             .padding(horizontal = 16.dp)
     ) {
         Spacer(Modifier.height(16.dp))
@@ -48,34 +48,32 @@ fun SearchScreen(
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
             }
 
-            Box(modifier = Modifier.weight(1f)) {
-                OutlinedTextField(
-                    value = query,
-                    onValueChange = {
-                        query = it
-                        viewModel.search(query)
-                    },
-                    placeholder = { Text("Tìm gì đó...") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .defaultMinSize(minHeight = 44.dp)
-                        .heightIn(min = 44.dp),
-                    singleLine = true,
-                    shape = RoundedCornerShape(22.dp),
-                    trailingIcon = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            if (query.isNotEmpty()) {
-                                IconButton(onClick = { query = ""; viewModel.search("") }) {
-                                    Icon(Icons.Default.Close, contentDescription = "Clear search")
-                                }
-                            }
-                            IconButton(onClick = { viewModel.search(query) }) {
-                                Icon(Icons.Default.Search, contentDescription = "Search", tint = Color(0xFFFF6600))
+            OutlinedTextField(
+                value = query,
+                onValueChange = {
+                    query = it
+                    viewModel.search(query)
+                },
+                placeholder = { Text("Tìm sự kiện...") },
+                modifier = Modifier
+                    .weight(1f)
+                    .defaultMinSize(minHeight = 44.dp)
+                    .heightIn(min = 44.dp),
+                singleLine = true,
+                shape = RoundedCornerShape(22.dp), 
+                trailingIcon = {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        if (query.isNotEmpty()) {
+                            IconButton(onClick = { query = ""; viewModel.search("") }) {
+                                Icon(Icons.Default.Close, contentDescription = "Clear search")
                             }
                         }
+                        IconButton(onClick = { viewModel.search(query) }) {
+                            Icon(Icons.Default.Search, contentDescription = "Search", tint = Color(0xFFFF6600))
+                        }
                     }
-                )
-            }
+                }
+            )
         }
 
         Spacer(Modifier.height(6.dp))
@@ -83,341 +81,128 @@ fun SearchScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(36.dp)
-                .background(Color(0xFFFDF6F0)), // Match background
+                .height(48.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Tìm kiếm box
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .background(Color(0xFFFDF6F0), shape = RoundedCornerShape(12.dp))
-                    .padding(horizontal = 12.dp),
-                contentAlignment = Alignment.CenterStart
+                    .padding(end = 4.dp) 
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        "Tìm kiếm:",
-                        color = Color(0xFFFF6600),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    // Dropdown for filter
-                    var expanded by remember { mutableStateOf(false) }
-                    val selectedType = viewModel.selectedType
-                    Box {
-                        Text(
-                            selectedType,
-                            color = Color.Black,
-                            fontSize = 16.sp,
-                            modifier = Modifier
-                                .clickable { expanded = true }
-                                .padding(vertical = 8.dp, horizontal = 8.dp)
-                        )
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            DropdownMenuItem(text = { Text("Bất kì", fontSize = 16.sp) }, onClick = { viewModel.setType("Bất kì"); expanded = false })
-                            DropdownMenuItem(text = { Text("Sự kiện", fontSize = 16.sp) }, onClick = { viewModel.setType("Sự kiện"); expanded = false })
-                            DropdownMenuItem(text = { Text("Trắc nghiệm", fontSize = 16.sp) }, onClick = { viewModel.setType("Trắc nghiệm"); expanded = false })
+                FilterDropdown(
+                    label = "Thời đại:",
+                    selectedValue = viewModel.eras.value.find { it.id == viewModel.selectedEraId }?.name ?: "Tất cả",
+                    items = listOf("Tất cả") + viewModel.eras.value.map { it.name },
+                    onItemSelected = {
+                        if (it == "Tất cả") {
+                            viewModel.setSelectedEra(null)
+                        } else {
+                            val selectedEraObject = viewModel.eras.value.find { era -> era.name == it }
+                            viewModel.setSelectedEra(selectedEraObject?.id)
                         }
                     }
-                }
+                )
             }
-            Spacer(Modifier.width(12.dp))
-            // Sắp xếp box
+
             Box(
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
-                    .background(Color(0xFFFDF6F0), shape = RoundedCornerShape(12.dp))
-                    .padding(horizontal = 12.dp),
-                contentAlignment = Alignment.CenterStart
+                    .padding(start = 4.dp) 
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        "Sắp xếp:",
-                        color = Color(0xFFFF6600),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
+                FilterDropdown(
+                    label = "Sắp xếp:",
+                    selectedValue = viewModel.selectedSort, // Directly use viewModel.selectedSort
+                    items = listOf("A-Z", "Mới nhất", "Xưa nhất"),
+                    onItemSelected = { viewModel.setSort(it) }
+                )
+            }
+        }
+
+        Spacer(Modifier.height(12.dp))
+
+        if (results.isEmpty() && query.isNotEmpty()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Không tìm thấy sự kiện nào.", style = MaterialTheme.typography.bodyLarge)
+            }
+        } else {
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(0.dp), 
+                modifier = Modifier.fillMaxSize() 
+            ) {
+                items(results, key = { event -> event.id }) { event ->
+                    SearchResultItem(
+                        event = event,
+                        onItemClick = { eventId -> onResultClick(eventId) }
                     )
-                    Spacer(Modifier.width(4.dp))
-                    // Dropdown for sort
-                    var expandedSort by remember { mutableStateOf(false) }
-                    val selectedSort = viewModel.selectedSort
-                    Box {
-                        Text(
-                            selectedSort,
-                            color = Color.Black,
-                            fontSize = 16.sp,
-                            modifier = Modifier
-                                .clickable { expandedSort = true }
-                                .padding(vertical = 8.dp, horizontal = 8.dp)
-                        )
-                        DropdownMenu(
-                            expanded = expandedSort,
-                            onDismissRequest = { expandedSort = false }
-                        ) {
-                            DropdownMenuItem(text = { Text("A-Z", fontSize = 16.sp) }, onClick = { viewModel.setSort("A-Z"); expandedSort = false })
-                            DropdownMenuItem(text = { Text("Mới nhất", fontSize = 16.sp) }, onClick = { viewModel.setSort("Mới nhất"); expandedSort = false })
-                            DropdownMenuItem(text = { Text("Xưa nhất", fontSize = 16.sp) }, onClick = { viewModel.setSort("Xưa nhất"); expandedSort = false })
-                        }
-                    }
                 }
             }
-        }
-
-        Spacer(Modifier.height(6.dp))
-
-        Card(
-            Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-        ) {
-            Box(Modifier.background(Color.White)) {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    items(results) { item ->
-                        SearchResultRow(item, onResultClick)
-                    }
-                }
-            }
-        }
-        Spacer(Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = Color(0xFFFF6600))
-            Spacer(Modifier.width(4.dp))
-            Text("Theo vào timeline", color = Color(0xFFFF6600))
-            Spacer(Modifier.width(16.dp))
-            Icon(Icons.Default.NorthEast, contentDescription = null, tint = Color.Black)
-            Spacer(Modifier.width(4.dp))
-            Text("Truy cập bài viết", color = Color.Black)
         }
     }
 }
 
 @Composable
-fun SearchResultRow(item: SearchResult, onClick: (SearchResult) -> Unit) {
+fun FilterDropdown(
+    label: String,
+    selectedValue: String,
+    items: List<String>,
+    onItemSelected: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
     Row(
-        Modifier
-            .fillMaxWidth()
-            .height(58.dp) // 1.2x of previous ~48dp
-            .clickable { onClick(item) },
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable { expanded = true }
+            .padding(horizontal = 12.dp, vertical = 8.dp)
     ) {
-        Column(
-            Modifier
-                .weight(1f)
-                .padding(top = 6.dp, bottom = 6.dp, start = 12.dp) // 6dp padding inside text column
-        ) {
-            Text(
-                item.title,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 16.sp,
-                color = Color(0xFFFF6600) // Orange title
-            )
-            Text(item.year, color = Color.Gray, fontSize = 13.sp)
-        }
-        Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = Color(0xFFFF6600))
-        Spacer(Modifier.width(8.dp))
-        Icon(
-            Icons.Default.NorthEast,
-            contentDescription = null,
-            tint = Color.Black,
-            modifier = Modifier.padding(end = 12.dp)
+        Text(
+            label,
+            color = Color(0xFFFF6600),
+            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp
         )
+        Spacer(Modifier.width(8.dp))
+        Box(modifier = Modifier.weight(1f)) {
+            Text(
+                selectedValue,
+                color = Color.Black,
+                fontSize = 16.sp,
+            )
+            DropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.fillMaxWidth(0.45f) 
+            ) {
+                items.forEach { item -> 
+                    DropdownMenuItem(
+                        text = { Text(item, fontSize = 16.sp) }, 
+                        onClick = {
+                            onItemSelected(item) 
+                            expanded = false
+                        }
+                    )
+                }
+            }
+        }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true, name = "SearchScreen Preview")
+@Preview(showBackground = true)
 @Composable
 fun SearchScreenPreview() {
-    val fakeResults = listOf(
-        SearchResult(title = "Nhà Đinh", year = "968 - 980"),
-        SearchResult(title = "Nhà Tiền Lê", year = "980 - 1009"),
-        SearchResult(title = "Nhà Lý", year = "1009 - 1225")
-    )
-    SearchScreenFake(
-        initialQuery = "",
-        onBack = {},
-        onResultClick = {},
-        results = fakeResults
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SearchScreenFake(
-    initialQuery: String = "",
-    onBack: (String) -> Unit,
-    onResultClick: (SearchResult) -> Unit,
-    results: List<SearchResult>
-) {
-    var query by remember { mutableStateOf(initialQuery) }
-    Column(
-        Modifier
-            .fillMaxSize()
-            .background(Color(0xFFFDF6F0))
-            .padding(horizontal = 16.dp)
-    ) {
-        Spacer(Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = { onBack(query) }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
-            }
-            Box(modifier = Modifier.weight(1f)) {
-                OutlinedTextField(
-                    value = query,
-                    onValueChange = { query = it },
-                    placeholder = { Text("Tìm gì đó...") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .defaultMinSize(minHeight = 44.dp)
-                        .heightIn(min = 44.dp),
-                    singleLine = true,
-                    shape = RoundedCornerShape(22.dp),
-                    trailingIcon = {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            if (query.isNotEmpty()) {
-                                IconButton(onClick = { query = "" }) {
-                                    Icon(Icons.Default.Close, contentDescription = "Clear search")
-                                }
-                            }
-                            IconButton(onClick = { }) {
-                                Icon(Icons.Default.Search, contentDescription = "Search", tint = Color(0xFFFF6600))
-                            }
-                        }
-                    }
-                )
-            }
-        }
-
-        Spacer(Modifier.height(6.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(36.dp)
-                .background(Color(0xFFFDF6F0)), // Match background
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            // Tìm kiếm box
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .background(Color(0xFFFDF6F0), shape = RoundedCornerShape(12.dp))
-                    .padding(horizontal = 12.dp),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        "Tìm kiếm:",
-                        color = Color(0xFFFF6600),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    // Dropdown for filter
-                    var expanded by remember { mutableStateOf(false) }
-                    Box {
-                        Text(
-                            "Bất kì",
-                            color = Color.Black,
-                            fontSize = 16.sp,
-                            modifier = Modifier
-                                .clickable { expanded = true }
-                                .padding(vertical = 8.dp, horizontal = 8.dp)
-                        )
-                        DropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false }
-                        ) {
-                            DropdownMenuItem(text = { Text("Bất kì", fontSize = 16.sp) }, onClick = { expanded = false })
-                            DropdownMenuItem(text = { Text("Sự kiện", fontSize = 16.sp) }, onClick = { expanded = false })
-                            DropdownMenuItem(text = { Text("Trắc nghiệm", fontSize = 16.sp) }, onClick = { expanded = false })
-                        }
-                    }
-                }
-            }
-
-
-            Spacer(Modifier.width(12.dp))
-
-
-            // Sắp xếp box
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .background(Color(0xFFFDF6F0), shape = RoundedCornerShape(12.dp))
-                    .padding(horizontal = 12.dp),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        "Sắp xếp:",
-                        color = Color(0xFFFF6600),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp
-                    )
-                    Spacer(Modifier.width(4.dp))
-                    // Dropdown for sort
-                    var expandedSort by remember { mutableStateOf(false) }
-                    Box {
-                        Text(
-                            "A-Z",
-                            color = Color.Black,
-                            fontSize = 16.sp,
-                            modifier = Modifier
-                                .clickable { expandedSort = true }
-                                .padding(vertical = 8.dp, horizontal = 8.dp)
-                        )
-                        DropdownMenu(
-                            expanded = expandedSort,
-                            onDismissRequest = { expandedSort = false }
-                        ) {
-                            DropdownMenuItem(text = { Text("A-Z", fontSize = 16.sp) }, onClick = { expandedSort = false })
-                            DropdownMenuItem(text = { Text("Mới nhất", fontSize = 16.sp) }, onClick = { expandedSort = false })
-                            DropdownMenuItem(text = { Text("Xưa nhất", fontSize = 16.sp) }, onClick = { expandedSort = false })
-
-                        }
-                    }
-                }
-            }
-        }
-
-        Spacer(Modifier.height(6.dp))
-
-        Card(
-            Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-        ) {
-            Box(Modifier.background(Color.White)) {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(6.dp)
-                ) {
-                    items(results) { item ->
-                        SearchResultRow(item, onResultClick)
-                    }
-                }
-            }
-        }
-        Spacer(Modifier.height(16.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null, tint = Color(0xFFFF6600))
-            Spacer(Modifier.width(4.dp))
-            Text("Theo vào timeline", color = Color(0xFFFF6600))
-            Spacer(Modifier.width(16.dp))
-            Icon(Icons.Default.NorthEast, contentDescription = null, tint = Color.Black)
-            Spacer(Modifier.width(4.dp))
-            Text("Truy cập bài viết", color = Color.Black)
-        }
-    }
+    // If SuSachTheme is available, wrap SearchScreen with it.
+    // MaterialTheme { // Using MaterialTheme as a placeholder if SuSachTheme is not found
+        SearchScreen(
+            initialQuery = "Test Query",
+            onBack = { queryString -> println("Back clicked with query: $queryString") }, // Named lambda param
+            onResultClick = { eventId -> println("Result clicked: $eventId") } // Named lambda param
+        )
+    // }
 }
