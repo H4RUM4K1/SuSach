@@ -13,7 +13,6 @@ class EventRepository {
             val doc = db.collection("events").document(eventId).get().await()
             doc.toObject(Event::class.java)?.copy(id = doc.id)
         } catch (e: Exception) {
-            Log.e("EventRepository", "Error fetching event by id $eventId", e)
             null
         }
     }
@@ -36,7 +35,6 @@ class EventRepository {
             val query = db.collection("events").whereEqualTo("eraId", eraId).get().await()
             query.documents.mapNotNull { it.toObject(Event::class.java)?.copy(id = it.id) }
         } catch (e: Exception) {
-            Log.e("EventRepository", "Error fetching events for era $eraId", e)
             emptyList()
         }
     }
@@ -63,7 +61,6 @@ class EventRepository {
                 randomDocument.toObject(Event::class.java)?.copy(id = randomDocument.id)
             }
         } catch (e: Exception) {
-            Log.e("EventRepository", "Error fetching random event", e)
             null
         }
     }
