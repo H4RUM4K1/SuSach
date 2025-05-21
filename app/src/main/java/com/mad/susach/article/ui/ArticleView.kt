@@ -66,7 +66,7 @@ fun ArticleView(eventId: String?, navController: NavController, viewModel: Artic
                 title = { Text(currentEvent?.name ?: "Event Details") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
