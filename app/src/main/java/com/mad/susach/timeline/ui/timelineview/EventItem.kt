@@ -1,9 +1,9 @@
 package com.mad.susach.timeline.ui.timelineview
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.Image // Added import for Image
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.* // Keep existing wildcard import
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,21 +12,24 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember // Added import for remember
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource // Added for painterResource
-import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mad.susach.R // Import R class for color resources
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.mad.susach.R
 import com.mad.susach.event.data.Event
+import com.mad.susach.article.ui.isNetworkUrl
 
 @Composable
 fun EventTimelineCircle(isSelected: Boolean, modifier: Modifier = Modifier) {
@@ -126,25 +129,47 @@ fun EventItem(
                 }
 
                 if (isSelected) {
-                    // Image display section - only shown if imageURL is not blank AND item is selected
-                    if (event.imageURL.isNotBlank()) {
-                        Spacer(modifier = Modifier.height(8.dp)) // Add some space before the image
-                        val context = LocalContext.current
-                        val imageResId = remember(event.imageURL, context) {
-                            val id = context.resources.getIdentifier(event.imageURL, "drawable", context.packageName)
-                            if (id != 0) id else android.R.drawable.ic_menu_gallery // Fallback placeholder
-                        }
+                    val imageUrl = event.imageURL
 
-                        Image(
-                            painter = painterResource(id = imageResId),
-                            contentDescription = event.name,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(150.dp) // You can adjust the height as needed
-                                .clip(MaterialTheme.shapes.medium)
-                        )
-                    }
+                    if (imageUrl.isNotBlank()) {
+                        val context = LocalContext.current
+                        val isNetwork = isNetworkUrl(imageUrl) 
+
+                        if (isNetwork) {
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(imageUrl)
+                                    .crossfade(true)
+                                    .build(),
+                                placeholder = painterResource(id = android.R.drawable.ic_menu_gallery), 
+                                error = painterResource(id = android.R.drawable.ic_menu_report_image), 
+                                contentDescription = event.name,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(150.dp)
+                                    .clip(MaterialTheme.shapes.medium)
+                            )
+                        } else { 
+                            val imageResId = remember(imageUrl, context) {
+                                val id = context.resources.getIdentifier(imageUrl, "drawable", context.packageName)
+                                if (id != 0) {
+                                    id
+                                } else {
+                                    android.R.drawable.ic_menu_report_image
+                                }
+                            }
+                            Image(
+                                painter = painterResource(id = imageResId),
+                                contentDescription = event.name,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(150.dp)
+                                    .clip(MaterialTheme.shapes.medium)
+                            )
+                        }
+                    } 
 
                     // Conditionally display Description section
                     if (event.description.isNotBlank()) {
