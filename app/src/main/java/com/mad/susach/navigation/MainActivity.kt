@@ -181,8 +181,8 @@ fun HomeScreen(
     }
 }
 
-// --- Thành phần UIUI ---
-@composable
+// --- Thành phần UI ---
+@Composable
 // Thanh tìm kiếm chi tiết
 fun SearchBar(placeholder: String, onClick: () -> Unit) {
     Card(

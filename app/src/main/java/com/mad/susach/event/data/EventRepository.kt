@@ -16,12 +16,14 @@ class EventRepository {
     }
 
     //Lấy sự kiện theo tên
-    suspend fun getEventByName(name: String): Event? = try {
-        val query = db.collection("events").whereEqualTo("name", name).get().await()
-        val doc = query.documents.firstOrNull() ?: return null
-        doc.toObject(Event::class.java)?.copy(id = doc.id)
-    } catch (e: Exception) {
-        null
+    suspend fun getEventByName(name: String): Event? {
+        return try {
+            val query = db.collection("events").whereEqualTo("name", name).get().await()
+            val doc = query.documents.firstOrNull() ?: return null
+            doc.toObject(Event::class.java)?.copy(id = doc.id)
+        } catch (e: Exception) {
+            null
+        }
     }
 
     //Lấy danh sách sự kiện theo eraId.
