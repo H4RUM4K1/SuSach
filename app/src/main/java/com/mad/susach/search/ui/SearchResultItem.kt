@@ -103,36 +103,11 @@ fun SearchResultItem(
                         contentScale = ContentScale.Crop
                     )
                 } else {
-                    // Placeholder for missing local image or if resourceId is 0
                     Spacer(modifier = Modifier.size(50.dp))
                 }
             } else {
-                // Placeholder if no imageURL is provided
                 Spacer(modifier = Modifier.size(50.dp))
             }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SearchResultItemPreview() {
-    MaterialTheme { // Or your app's theme e.g., SuSachTheme
-        Surface(color = Color(0xFFFDF6F0)) { // Using a background color similar to the app's theme
-            SearchResultItem(
-                event = Event(
-                    id = "1",
-                    name = "Sự kiện Mẫu",
-                    description = "Đây là mô tả cho sự kiện mẫu.",
-                    imageURL = "", // Provide a sample image URL if you have one, or leave empty for placeholder
-                    startDate = 2024,
-                    endDate = 2025,
-                    eraId = "era1"
-                ),
-                onItemClick = { eventId ->
-                    println("Clicked on event: $eventId")
-                }
-            )
         }
     }
 }

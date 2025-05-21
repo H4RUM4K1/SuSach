@@ -27,7 +27,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -40,7 +39,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             Surface(
                 modifier = Modifier.fillMaxSize(),
-                color = Color(0xFFfffbff) // Changed background color
+                color = Color(0xFFfffbff)
             ) {
                 AppNavigation()
             }
@@ -48,6 +47,9 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+data class SavedItem(val title: String, val imageRes: Int?, val year: String)
+
+// --- Trang chủchủ ---
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
@@ -59,21 +61,15 @@ fun HomeScreen(
 ) {
     val saved = remember {
         listOf(
-            SavedItem(
-                title = "Nhà Triệu",
-                imageRes = R.drawable.nhatrieu,
-                year = "179 TCN - 111 TCN"
-            ),
-            SavedItem(
-                title = "Bắc thuộc lần thứ nhất",
-                imageRes = R.drawable.bacthuoclan1,
-                year = "111 TCN - 40"
-            )
+            SavedItem("Nhà Triệu", R.drawable.nhatrieu, "179 TCN - 111 TCN"),
+            SavedItem("Bắc thuộc lần thứ nhất", R.drawable.bacthuoclan1, "111 TCN - 40")
         )
     }
+
     var selectedNav by remember { mutableIntStateOf(0) }
     var searchText by remember { mutableStateOf("Tìm gì đó...") }
     val context = LocalContext.current
+
 
     Box(
         Modifier
@@ -84,11 +80,11 @@ fun HomeScreen(
             Modifier
                 .fillMaxWidth(0.84f)
                 .align(Alignment.TopCenter)
-                .padding(horizontal = 0.dp)
-                .padding(bottom = 56.dp) // Padding for BottomNavBar
+                .padding(bottom = 56.dp)
         ) {
-            item { // Header, Search, Saved Carousel
+            item {
                 Spacer(Modifier.height(30.dp))
+                // Lời chàochào
                 Row(
                     Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
@@ -100,6 +96,8 @@ fun HomeScreen(
                         fontFamily = FontFamily(Font(R.font.sitka_small_semibold)),
                         modifier = Modifier.weight(1f)
                     )
+
+                    // Thông báo
                     Box {
                         IconButton(onClick = onNotificationClick) {
                             Icon(
@@ -121,46 +119,54 @@ fun HomeScreen(
                                 Text(
                                     text = if (notificationCount > 99) "99+" else notificationCount.toString(),
                                     color = Color.White,
-                                    fontSize = 10.sp * 1.5f, 
+                                    fontSize = 15.sp,
                                     fontWeight = FontWeight.Bold
                                 )
                             }
                         }
                     }
                 }
+
                 Spacer(Modifier.height(18.dp))
+                
+                // Thanh tìm kiếm
                 SearchBar(
                     placeholder = searchText,
                     onClick = { onSearchClick(searchText) }
                 )
                 Spacer(Modifier.height(18.dp))
+
+                // "Đã lưu"
                 Text("Đã lưu", fontWeight = FontWeight.SemiBold, fontSize = 21.sp)
                 Spacer(Modifier.height(12.dp))
                 SavedCarousel(items = saved, onClick = onNotificationClick)
                 Spacer(Modifier.height(12.dp))
             }
 
-            stickyHeader { // Sticky "Khám phá" title
+            stickyHeader {
+                // "Khám phá"
                 Text(
                     "Khám phá",
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 21.sp,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Color(0xFFFDF6F0)) // Background to prevent overlap
-                        .padding(vertical = 12.dp) // Padding for spacing
+                        .background(Color(0xFFFDF6F0))
+                        .padding(vertical = 12.dp)
                 )
             }
 
-            item { // ExploreSection and bottom spacer
+            // 3 nút khám phá
+            item {
                 ExploreSection(
                     onTimelineClick = { navController.navigate(Screen.EraSelection.route) },
                     onMapClick = { /* TODO: Implement map click */ },
                     onRandomClick = { navController.navigate(Screen.RandomArticle.route) }
                 )
-                Spacer(Modifier.height(48.dp)) // 48.dp spacer at the bottom
+                Spacer(Modifier.height(48.dp))
             }
         }
+        // Thanh điều hướng
         MainBottomNavBar(
             selected = selectedNav,
             onSelected = {
@@ -175,7 +181,9 @@ fun HomeScreen(
     }
 }
 
-@Composable
+// --- Thành phần UIUI ---
+@composable
+// Thanh tìm kiếm chi tiết
 fun SearchBar(placeholder: String, onClick: () -> Unit) {
     Card(
         modifier = Modifier
@@ -186,19 +194,20 @@ fun SearchBar(placeholder: String, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(4.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Box(
-            Modifier.fillMaxSize(),
-            contentAlignment = Alignment.CenterStart
+        Row(
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(Modifier.padding(horizontal = 12.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Search, contentDescription = null, tint = Color(0xFFFF6600))
-                Spacer(Modifier.width(8.dp))
-                Text(placeholder, color = Color.Gray, fontSize = 16.sp)
-            }
+            Icon(Icons.Default.Search, contentDescription = null, tint = Color(0xFFFF6600))
+            Spacer(Modifier.width(8.dp))
+            Text(placeholder, color = Color.Gray, fontSize = 16.sp)
         }
     }
 }
 
+// Carousel hiển thị các bài viết đã lưu
 @Composable
 fun SavedCarousel(items: List<SavedItem>, onClick: () -> Unit) {
     LazyRow {
@@ -209,8 +218,7 @@ fun SavedCarousel(items: List<SavedItem>, onClick: () -> Unit) {
     }
 }
 
-data class SavedItem(val title: String, val imageRes: Int?, val year: String)
-
+// Card hiển thị thông tin bài viết đã lưu
 @Composable
 fun SavedCard(item: SavedItem, onClick: () -> Unit) {
     Card(
@@ -226,20 +234,21 @@ fun SavedCard(item: SavedItem, onClick: () -> Unit) {
                 Modifier
                     .fillMaxSize()
                     .background(Color.White)
-                    .padding(bottom = 32.dp) // leave space for year box
+                    .padding(bottom = 32.dp)
             ) {
-                if (item.imageRes != null) {
+                // Hình ảnh bài viết
+                item.imageRes?.let {
                     Image(
-                        painter = painterResource(id = item.imageRes),
+                        painter = painterResource(id = it),
                         contentDescription = null,
                         modifier = Modifier
                             .height(78.dp)
                             .fillMaxWidth()
                     )
-                } else {
-                    Spacer(Modifier.height(8.dp))
                 }
                 Spacer(Modifier.height(8.dp))
+
+                // Tiêu đề bài viết
                 Text(
                     item.title,
                     fontWeight = FontWeight.SemiBold,
@@ -251,6 +260,7 @@ fun SavedCard(item: SavedItem, onClick: () -> Unit) {
                         .weight(1f, fill = false)
                 )
             }
+            // Năm bài viết
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -282,6 +292,7 @@ fun ExploreSection(
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
+        // "Theo dòng sử việtviệt"
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -312,8 +323,11 @@ fun ExploreSection(
                 )
             }
         }
+
         Spacer(Modifier.height(16.dp))
+
         Row(Modifier.fillMaxWidth()) {
+            // "Lãnh thổ qua các thời kỳ"
             Card(
                 modifier = Modifier
                     .weight(1f)
@@ -347,7 +361,10 @@ fun ExploreSection(
                     )
                 }
             }
+
             Spacer(Modifier.width(16.dp))
+            
+            // "Bài viết ngẫu nhiên"
             Card(
                 modifier = Modifier
                     .weight(1f)
@@ -383,15 +400,4 @@ fun ExploreSection(
     }
 }
 
-@Preview(showBackground = true, name = "Trang chủ - Kiến thức")
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen(
-        username = "XXX",
-        notificationCount = 5,
-        onNotificationClick = {},
-        onSearchClick = {},
-        navController = rememberNavController()
-    )
-}
 

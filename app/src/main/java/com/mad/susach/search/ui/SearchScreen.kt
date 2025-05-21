@@ -194,15 +194,3 @@ fun FilterDropdown(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SearchScreenPreview() {
-    // If SuSachTheme is available, wrap SearchScreen with it.
-    // MaterialTheme { // Using MaterialTheme as a placeholder if SuSachTheme is not found
-        SearchScreen(
-            initialQuery = "Test Query",
-            onBack = { queryString -> println("Back clicked with query: $queryString") }, // Named lambda param
-            onResultClick = { eventId -> println("Result clicked: $eventId") } // Named lambda param
-        )
-    // }
-}

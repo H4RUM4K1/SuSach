@@ -1,32 +1,23 @@
 package com.mad.susach.timeline.ui.eralselection
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.foundation.border
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.Spacer
 import com.mad.susach.R
 import com.mad.susach.timeline.data.Era
 
@@ -41,7 +32,12 @@ fun EraItem(
             .fillMaxWidth()
             .padding(vertical = 8.dp, horizontal = 12.dp)
             .clickable { onEraClick(era.id) }
-            .then(if (isSelected) Modifier.border(2.dp, Color(0xFF2196F3), RoundedCornerShape(12.dp)) else Modifier),
+            .then(
+                if (isSelected)
+                    Modifier.border(2.dp, Color(0xFF2196F3), RoundedCornerShape(12.dp))
+                else Modifier
+            ),
+
         elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -53,31 +49,21 @@ fun EraItem(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Era image from drawable resource name
-            val context = LocalContext.current
+            // Ảnh minh họa
+            val imageResId = getEraImageResId(era.imageUrl)
 
-            val imageResId = remember(era.imageUrl) {
-                if (era.imageUrl.isNotBlank()) {
-                    val resId = context.resources.getIdentifier(era.imageUrl, "drawable", context.packageName)
-                    if (resId == 0) {
-                        R.drawable.ic_launcher_background 
-                    } else {
-                        resId
-                    }
-                } else {
-                    R.drawable.ic_launcher_background 
-                }
-            }
             Image(
                 painter = painterResource(id = imageResId),
                 contentDescription = era.name,
                 modifier = Modifier
-                    .height(78.dp) 
+                    .height(78.dp)
                     .width(78.dp)
                     .clip(RoundedCornerShape(8.dp))
             )
+
             Spacer(modifier = Modifier.width(12.dp))
 
+            // Chi tiết
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = era.name,
@@ -102,22 +88,27 @@ fun EraItem(
     }
 }
 
-fun formatEraYear(year: Int): String {
-    return if (year < 0) "${-year} TCN" else if (year == 0) "0" else year.toString()
+// Hàm helper để lấy image từ url
+@SuppressLint("DiscouragedApi")
+@Composable
+private fun getEraImageResId(imageUrl: String): Int {
+    val context = LocalContext.current
+    return remember(imageUrl) {
+        if (imageUrl.isNotBlank()) {
+            val resId = context.resources.getIdentifier(imageUrl, "drawable", context.packageName)
+            if (resId == 0) R.drawable.ic_launcher_background else resId
+        } else {
+            R.drawable.ic_launcher_background
+        }
+    }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun EraItemPreview() {
-    EraItem(
-        era = Era(
-            id = "1",
-            name = "Thời kỳ cổ đại",
-            description = "Thời kỳ dựng nước đầu tiên của người Việt.",
-            startYear = -2879,
-            endYear = -179
-        ),
-        onEraClick = {},
-        isSelected = true
-    )
+// Hàm helper định dạng năm TCN
+fun formatEraYear(year: Int): String {
+    return when {
+        year < 0 -> "${-year} TCN"
+        year == 0 -> "0"
+        else -> year.toString()
+    }
 }
+

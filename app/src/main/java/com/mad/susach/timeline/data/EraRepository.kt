@@ -1,6 +1,5 @@
 package com.mad.susach.timeline.data
 
-import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.mad.susach.event.data.Event
@@ -12,40 +11,33 @@ class EraRepository {
     private val db = Firebase.firestore
     private val eventRepository = EventRepository()
 
-    suspend fun getEras(): List<Era> {
-        return try {
-            val snapshot = db.collection("eras").get().await()
-            val eras = snapshot.documents.mapNotNull { document ->
-                document.toObject(Era::class.java)?.copy(id = document.id)
-            }
-            Log.d("EraRepository", "Fetched eras: $eras")
-            eras
-        } catch (e: Exception) {
-            Log.e("EraRepository", "Error fetching eras", e)
-            emptyList()
-        }
+    // Lấy tất cả era từ Firestore
+    suspend fun getEras(): List<Era> = try {
+        db.collection("eras")
+            .get()
+            .await()
+            .documents
+            .mapNotNull { doc -> doc.toObject(Era::class.java)?.copy(id = doc.id) }
+    } catch (e: Exception) {
+        emptyList()
     }
 
-    suspend fun getEraById(id: String): Era? {
-        return try {
-            val doc = db.collection("eras").document(id).get().await()
-            val era = doc.toObject(Era::class.java)?.copy(id = doc.id)
-            Log.d("EraRepository", "Fetched era by id $id: $era")
-            era
-        } catch (e: Exception) {
-            Log.e("EraRepository", "Error fetching era by id $id", e)
-            null
-        }
+    // Lấy 1 era theo id
+    suspend fun getEraById(id: String): Era? = try {
+        db.collection("eras")
+            .document(id)
+            .get()
+            .await()
+            .toObject(Era::class.java)
+            ?.copy(id = id)
+    } catch (e: Exception) {
+        null
     }
 
-    suspend fun getEventsForEra(eraId: String): List<Event> {
-        return try {
-            val events = eventRepository.getEventsForEra(eraId)
-            Log.d("EraRepository", "Fetched events for era $eraId: $events")
-            events
-        } catch (e: Exception) {
-            Log.e("EraRepository", "Error fetching events for era $eraId", e)
-            emptyList()
-        }
+    // Lấy tất cả các sự kiện trong một era
+    suspend fun getEventsForEra(eraId: String): List<Event> = try {
+        eventRepository.getEventsForEra(eraId)
+    } catch (e: Exception) {
+        emptyList()
     }
 }

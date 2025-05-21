@@ -1,12 +1,8 @@
 package com.mad.susach.timeline.ui.timelineview
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.* // Keep existing wildcard import
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
@@ -33,37 +29,35 @@ import com.mad.susach.article.ui.isNetworkUrl
 
 @Composable
 fun EventTimelineCircle(isSelected: Boolean, modifier: Modifier = Modifier) {
-    val circleColor = colorResource(id = R.color.orange_icon) // Use color from XML
-    val outerSize = 26.dp // Consistent outer size for layout calculations and alignment
+    val circleColor = colorResource(id = R.color.orange_icon)
+    val outerSize = 26.dp
     val innerCircleSize = 16.dp
     val borderSize = 2.dp
-    // val paddingBetweenCircleAndBorder = 3.dp // Derived: (26 - 16 - 2*2)/2 = 3
 
     Box(
         modifier = modifier
-            .size(outerSize) // Occupy a consistent space for alignment purposes
-            .clip(CircleShape), // Clip potential border drawn directly on this Box if structure changes
+            .size(outerSize)
+            .clip(CircleShape),
         contentAlignment = Alignment.Center
     ) {
+        // Nếu được chọn, thêm vòng tròn bên ngoài
         if (isSelected) {
-            // Outer border, drawn on a Box that fills the outerSize
             Box(
                 modifier = Modifier
-                    .matchParentSize() // Fills the 26.dp outer size
-                    .border(BorderStroke(borderSize, brush = SolidColor(circleColor)), CircleShape) // Explicitly use SolidColor for brush
+                    .matchParentSize()
+                    .border(BorderStroke(borderSize, brush = SolidColor(circleColor)), CircleShape)
             )
-            // Inner circle, centered within the outerSize
             Box(
                 modifier = Modifier
                     .size(innerCircleSize)
-                    .background(color = circleColor, shape = CircleShape) // Explicitly use color parameter
+                    .background(color = circleColor, shape = CircleShape)
             )
         } else {
-            // Default solid circle, centered within the outerSize
+            // Nếu không được chọn, chỉ hiển thị hình tròn
             Box(
                 modifier = Modifier
                     .size(innerCircleSize)
-                    .background(color = circleColor, shape = CircleShape) // Explicitly use color parameter
+                    .background(color = circleColor, shape = CircleShape)
             )
         }
     }
@@ -82,23 +76,25 @@ fun EventItem(
             .padding(vertical = 4.dp)
             .animateContentSize()
             .clickable { onItemClick(event.id) },
+            
+        //Hiệu ứng dropshadow
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.Transparent
-        ),
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent),
         border = null
     ) {
         Row(
             modifier = Modifier
-                .padding(vertical = 12.dp) // Horizontal padding removed, handled by TimelineScreenUI
+                .padding(vertical = 12.dp) 
                 .fillMaxWidth(),
             verticalAlignment = Alignment.Top
         ) {
             EventTimelineCircle(
                 isSelected = isSelected,
-                modifier = Modifier.padding(top = 4.dp) // Y-axis padding for visual alignment with text
+                modifier = Modifier.padding(top = 4.dp)
             )
-            Spacer(modifier = Modifier.width(12.dp)) // Space between circle and text content
+
+            Spacer(modifier = Modifier.width(12.dp))
+
             Column(modifier = Modifier.weight(1f)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Column(modifier = Modifier.weight(1f)) {
@@ -114,7 +110,10 @@ fun EventItem(
                         Text(
                             text = formatEventDate(event.startDate, event.endDate),
                             style = MaterialTheme.typography.bodySmall,
-                            color = if (isSelected) colorResource(id = R.color.orange_text).copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurfaceVariant
+                            color = if (isSelected)
+                                colorResource(id = R.color.orange_text).copy(alpha = 0.8f)
+                            else
+                                MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                     if (isSelected) {
@@ -122,56 +121,15 @@ fun EventItem(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                                 contentDescription = "Navigate to article",
-                                tint = colorResource(id = R.color.orange_icon) // Use color from XML
+                                tint = colorResource(id = R.color.orange_icon)
                             )
                         }
                     }
                 }
 
+                // Mở rộng nội dung khi được chọnchọn
                 if (isSelected) {
-                    val imageUrl = event.imageURL
-
-                    if (imageUrl.isNotBlank()) {
-                        val context = LocalContext.current
-                        val isNetwork = isNetworkUrl(imageUrl) 
-
-                        if (isNetwork) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(context)
-                                    .data(imageUrl)
-                                    .crossfade(true)
-                                    .build(),
-                                placeholder = painterResource(id = android.R.drawable.ic_menu_gallery), 
-                                error = painterResource(id = android.R.drawable.ic_menu_report_image), 
-                                contentDescription = event.name,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(150.dp)
-                                    .clip(MaterialTheme.shapes.medium)
-                            )
-                        } else { 
-                            val imageResId = remember(imageUrl, context) {
-                                val id = context.resources.getIdentifier(imageUrl, "drawable", context.packageName)
-                                if (id != 0) {
-                                    id
-                                } else {
-                                    android.R.drawable.ic_menu_report_image
-                                }
-                            }
-                            Image(
-                                painter = painterResource(id = imageResId),
-                                contentDescription = event.name,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(150.dp)
-                                    .clip(MaterialTheme.shapes.medium)
-                            )
-                        }
-                    } 
-
-                    // Conditionally display Description section
+                    EventImageSection(event)
                     if (event.description.isNotBlank()) {
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
@@ -182,13 +140,15 @@ fun EventItem(
                         Text(
                             text = event.description,
                             style = MaterialTheme.typography.bodyMedium,
-                            maxLines = 5 // Limit lines for description
                         )
                     }
-
-                    // Conditionally display Summary section
+                    // Summary section
                     if (event.summary.isNotBlank()) {
-                        Spacer(modifier = Modifier.height(if (event.description.isNotBlank() || event.imageURL.isNotBlank()) 8.dp else 12.dp)) // Adjust spacer
+                        Spacer(
+                            modifier = Modifier.height(
+                                if (event.description.isNotBlank() || event.imageURL.isNotBlank()) 8.dp else 12.dp
+                            )
+                        )
                         Text(
                             text = "Tóm tắt:",
                             style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
@@ -205,6 +165,50 @@ fun EventItem(
     }
 }
 
+// Hàm helper để kiểm tra xem URL có phải là URL mạng hay không
+@Composable
+private fun EventImageSection(event: Event) {
+    val imageUrl = event.imageURL
+    if (imageUrl.isNotBlank()) {
+        val context = LocalContext.current
+        val isNetwork = isNetworkUrl(imageUrl)
+        if (isNetwork) {
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data(imageUrl)
+                    .crossfade(true)
+                    .build(),
+                placeholder = painterResource(id = android.R.drawable.ic_menu_gallery),
+                error = painterResource(id = android.R.drawable.ic_menu_report_image),
+                contentDescription = event.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .clip(MaterialTheme.shapes.medium)
+            )
+        } else {
+
+            // Nếu không phải là URL mạng, sử dụng drawable resource
+            val imageResId = remember(imageUrl, context) {
+                val id = context.resources.getIdentifier(imageUrl, "drawable", context.packageName)
+                if (id != 0) id else android.R.drawable.ic_menu_report_image
+            }
+            Image(
+                painter = painterResource(id = imageResId),
+                contentDescription = event.name,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .clip(MaterialTheme.shapes.medium)
+            )
+        }
+    }
+}
+
+
+// Hàm helper để định dạng năm
 fun formatEventDate(start: Int, end: Int): String {
     val startYear = if (start < 0) "${-start} TCN" else start.toString()
     val endYear = if (end < 0) "${-end} TCN" else end.toString()

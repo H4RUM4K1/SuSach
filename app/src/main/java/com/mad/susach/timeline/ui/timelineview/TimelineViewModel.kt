@@ -12,59 +12,47 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class TimelineViewModel(
-    private val eraRepository: EraRepository = EraRepository(),
-    val eraId: String = ""
+    private val eraRepository: EraRepository,
+    eraId: String
 ) : ViewModel() {
 
+    // Hiển thị danh sách sự kiện
     private val _events = MutableStateFlow<List<Event>>(emptyList())
     val events: StateFlow<List<Event>> = _events.asStateFlow()
 
-    private val _selectedEvent = MutableStateFlow<Event?>(null)
-    val selectedEvent: StateFlow<Event?> = _selectedEvent.asStateFlow()
-
+    // Era hiện tại
     private val _selectedEra = MutableStateFlow<Era?>(null)
     val selectedEra: StateFlow<Era?> = _selectedEra.asStateFlow()
 
+    // LoadingLoading
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+    // ErrorError
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
 
     init {
-        if (eraId.isNotEmpty()) {
-            loadEventsForEra(eraId)
-        } else {
-            _error.value = "Era ID not provided."
-        }
+        loadEventsForEra(eraId)
     }
 
+    // Load tất cả event cho era này
     fun loadEventsForEra(id: String) {
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
             try {
-                android.util.Log.d("TimelineViewModel", "Fetching events for eraId=$id")
                 val result = eraRepository.getEventsForEra(id)
-                android.util.Log.d("TimelineViewModel", "Fetched events: count=${result.size}, data=$result")
                 _events.value = result
             } catch (e: Exception) {
-                android.util.Log.e("TimelineViewModel", "Failed to fetch events for eraId=$id: ${e.message}", e)
-                _error.value = "Failed to load events: ${e.message}"
+                _error.value = "Tải sự kiện thất bại: ${e.message}"
             } finally {
                 _isLoading.value = false
             }
         }
     }
 
-    fun selectEvent(event: Event) {
-        _selectedEvent.value = event
-        // Optionally load article directly or navigate and then load
-        // Use event.summary or event.content if you want, but Event does not have articleId
-        // Remove loadArticleForEvent(event.articleId)
-    }
-
-
+    // Load chi tiết era
     fun loadEraDetails(id: String) {
         viewModelScope.launch {
             try {
@@ -73,10 +61,6 @@ class TimelineViewModel(
                 _error.value = "Failed to load era details: ${e.message}"
             }
         }
-    }
-
-    fun clearSelectedEvent() {
-        _selectedEvent.value = null
     }
 
     companion object {
