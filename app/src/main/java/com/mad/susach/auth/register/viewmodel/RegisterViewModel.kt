@@ -3,7 +3,7 @@ package com.mad.susach.auth.register.viewmodel
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.mad.susach.auth.model.User
+import com.mad.susach.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -47,9 +47,17 @@ class RegisterViewModel : ViewModel() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
                 val userId = result.user?.uid ?: return@addOnSuccessListener
+                val userToSave = User(
+                    id = userId,
+                    email = email,
+                    fullName = user.fullName,
+                    phoneNumber = user.phoneNumber,
+                    address = user.address,
+                    dateOfBirth = user.dateOfBirth
+                )
                 firestore.collection("users")
                     .document(userId)
-                    .set(user.copy(id = userId))
+                    .set(userToSave)
                     .addOnSuccessListener {
                         _uiState.value = _uiState.value.copy(
                             isLoading = false,

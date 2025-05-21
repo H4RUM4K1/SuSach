@@ -8,21 +8,18 @@ import com.google.firebase.firestore.FirebaseFirestore
 class SuSachApp : Application() {
 
     companion object {
-        private lateinit var instance: SuSachApp
-        
-        fun getInstance(): SuSachApp = instance
-        
         // Firebase instances
-        val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
-        val firestore: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
+        lateinit var auth: FirebaseAuth
+            private set
+        lateinit var firestore: FirebaseFirestore
+            private set
     }
 
     override fun onCreate() {
         super.onCreate()
-        instance = this
-        
-        // Initialize Firebase
         FirebaseApp.initializeApp(this)
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
         
         // Initialize other libraries here
         setupTimber()

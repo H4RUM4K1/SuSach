@@ -59,15 +59,26 @@ fun DetailedProfileScreen(
 
         if (state.error != null) {
             AlertDialog(
-                onDismissRequest = { /* Dismiss error */ },
+                onDismissRequest = { viewModel.refresh() },
                 title = { Text("Lỗi") },
                 text = { Text(state.error!!) },
                 confirmButton = {
-                    TextButton(onClick = { /* Dismiss error */ }) {
-                        Text("OK")
+                    TextButton(onClick = { viewModel.refresh() }) {
+                        Text("Thử lại")
                     }
                 }
             )
+        }
+
+        if (userData == null && !state.isLoading) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Button(onClick = { viewModel.refresh() }) {
+                    Text("Tải lại")
+                }
+            }
         }
     }
 }

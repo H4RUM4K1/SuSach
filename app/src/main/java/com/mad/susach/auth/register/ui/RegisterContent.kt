@@ -7,7 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import com.mad.susach.auth.model.User
+import com.mad.susach.model.User
 import com.mad.susach.auth.register.viewmodel.RegisterViewModel
 import com.mad.susach.components.DatePickerDialog
 import androidx.compose.material.icons.Icons

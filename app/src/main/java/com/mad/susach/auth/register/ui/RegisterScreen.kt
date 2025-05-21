@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mad.susach.auth.model.User
+import com.mad.susach.model.User
 import com.mad.susach.auth.register.viewmodel.RegisterViewModel
 
 @Composable

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -39,9 +40,20 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val auth = FirebaseAuth.getInstance()
+                val firestore = FirebaseFirestore.getInstance()
                 Log.d("LoginViewModel", "Attempting login for $email")
                 val result = auth.signInWithEmailAndPassword(email, password).await()
                 Log.d("LoginViewModel", "Login success: ${'$'}{result.user?.uid}")
+                Log.d("LoginViewModel", "Login successful, checking user document...")
+                
+                // Verify user document exists
+                val userDoc = firestore.collection("users")
+                    .document(result.user?.uid ?: "")
+                    .get()
+                    .await()
+                
+                Log.d("LoginViewModel", "User document exists: ${userDoc.exists()}")
+                
                 _uiState.value = _uiState.value.copy(isLoading = false, isSuccess = true, error = null)
             } catch (e: Exception) {
                 Log.e("LoginViewModel", "Login failed", e)

@@ -7,8 +7,4 @@ data class User(
     val phoneNumber: String = "",
     val address: String = "",
     val dateOfBirth: String = "",
-    val avatarUrl: String = "",
-    val savedArticles: List<String> = emptyList(),
-    val achievements: List<String> = emptyList(),
-    val createdAt: Long = System.currentTimeMillis()
 )
