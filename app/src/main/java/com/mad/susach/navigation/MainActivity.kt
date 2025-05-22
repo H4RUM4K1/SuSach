@@ -43,60 +43,14 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            var selectedTab by remember { mutableStateOf(0) }
-            val profileViewModel: ProfileViewModel = viewModel()
-            val context = LocalContext.current
-            
-            Box(
-                modifier = Modifier.background(Color(0xFFFDF6F0))
-            ) {
-                Column(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxWidth()
-                    ) {
-                        when (selectedTab) {
-                            0 -> HomeScreen(
-                                username = "User",
-                                notificationCount = 0,
-                                onNotificationClick = {},
-                                onSearchClick = {},
-                                navController = rememberNavController()
-                            )
-                            1 -> { /* Màn hình Luyện tập */ }
-                            2 -> ProfileScreen(
-                                viewModel = profileViewModel,
-                                onLogout = {
-                                    profileViewModel.logout()
-                                    context.startActivity(
-                                        Intent(context, LoginActivity::class.java).apply {
-                                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                        }
-                                    )
-                                },
-                                onNavigateToSavedPosts = {
-                                    context.startActivity(Intent(context, SavedPostsActivity::class.java))
-                                }
-                            )
-                        }
-                    }
-                    
-                    MainBottomNavBar(
-                        selected = selectedTab,
-                        onSelected = { selectedTab = it }
-                    )
-                }
-            }
+            AppNavigation()
         }
     }
 }
 
 data class SavedItem(val title: String, val imageRes: Int?, val year: String)
 
-// --- Trang chủchủ ---
+// --- Trang chủ ---
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomeScreen(
@@ -113,7 +67,7 @@ fun HomeScreen(
         )
     }
     
-    var searchText by remember { mutableStateOf("Tìm gì đó...") }
+    val searchText by remember { mutableStateOf("Tìm gì đó...") }
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -123,11 +77,10 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
-                .padding(bottom = 56.dp)
         ) {
             item {
                 Spacer(Modifier.height(30.dp))
-                // Lời chàochào
+                // Lời chào
                 Row(
                     Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
@@ -327,7 +280,7 @@ fun ExploreSection(
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        // "Theo dòng sử việtviệt"
+        // "Theo dòng sử việt"
         Card(
             modifier = Modifier
                 .fillMaxWidth()

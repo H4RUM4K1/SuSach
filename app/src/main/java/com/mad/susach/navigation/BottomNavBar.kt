@@ -11,28 +11,52 @@ import androidx.compose.material.icons.automirrored.filled.Rule
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.currentBackStackEntryAsState
+
+// Data class to hold bottom navigation item properties
+data class BottomNavItem(
+    val label: String,
+    val selectedIcon: ImageVector,
+    val unselectedIcon: ImageVector,
+    val route: String
+)
 
 @Composable
 fun MainBottomNavBar(
-    selected: Int,
-    onSelected: (Int) -> Unit,
+    navController: NavController,
     modifier: Modifier = Modifier
 ) {
     val navItems = listOf(
-        Triple("Kiến thức", Icons.AutoMirrored.Filled.MenuBook, Icons.Filled.Book),
-        Triple("Luyện tập", Icons.AutoMirrored.Filled.Rule, Icons.AutoMirrored.Filled.Rule),
-        Triple("Người dùng", Icons.Filled.AccountCircle, Icons.Filled.Person)
+        BottomNavItem(
+            label = "Kiến thức",
+            selectedIcon = Icons.Filled.Book,
+            unselectedIcon = Icons.AutoMirrored.Filled.MenuBook,
+            route = Screen.Home.route
+        ),
+        BottomNavItem(
+            label = "Luyện tập",
+            selectedIcon = Icons.AutoMirrored.Filled.Rule, // Using auto-mirrored
+            unselectedIcon = Icons.AutoMirrored.Filled.Rule,
+            route = Screen.Practice.route
+        ),
+        BottomNavItem(
+            label = "Người dùng",
+            selectedIcon = Icons.Filled.Person,
+            unselectedIcon = Icons.Filled.AccountCircle,
+            route = Screen.Profile.route
+        )
     )
 
     NavigationBar(
@@ -40,43 +64,46 @@ fun MainBottomNavBar(
         containerColor = Color(0xFFFFF3E0),
         tonalElevation = 8.dp
     ) {
-        navItems.forEachIndexed { index, triple ->
-            val (label, selectedIcon, unselectedIcon) = triple
-            val isSelected = selected == index
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentDestination = navBackStackEntry?.destination
 
+        navItems.forEach { item ->
+            val isSelected = currentDestination?.hierarchy?.any { it.route == item.route } == true
             NavigationBarItem(
                 selected = isSelected,
-                onClick = { onSelected(index) },
+                onClick = {
+                    navController.navigate(item.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                        }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
                 icon = {
                     Icon(
-                        imageVector = if (isSelected) selectedIcon else unselectedIcon,
-                        contentDescription = label,
+                        imageVector = if (isSelected) item.selectedIcon else item.unselectedIcon,
+                        contentDescription = item.label,
                         tint = if (isSelected) Color(0xFFFF6600) else Color(0xFF3A3939),
                         modifier = Modifier.size(32.dp)
                     )
                 },
                 label = {
                     Text(
-                        text = label,
+                        text = item.label,
                         color = if (isSelected) Color(0xFFFF6600) else Color(0xFF3A3939),
                         fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
                         fontSize = 14.sp
                     )
                 },
                 colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color.Transparent,
                     selectedIconColor = Color(0xFFFF6600),
-                    unselectedIconColor = Color(0xFF3A3939),
+                    unselectedIconColor = Color.Gray,
                     selectedTextColor = Color(0xFFFF6600),
-                    unselectedTextColor = Color(0xFF3A3939)
+                    unselectedTextColor = Color.Gray,
+                    indicatorColor = Color.Transparent // Or a subtle selection color like Color(0xFFFDF6F0).copy(alpha = 0.1f)
                 )
             )
         }
     }
-}
-
-@Preview(showBackground = true, name = "MainBottomNavBar Preview")
-@Composable
-fun MainBottomNavBarPreview() {
-    MainBottomNavBar(selected = 0, onSelected = {})
 }
