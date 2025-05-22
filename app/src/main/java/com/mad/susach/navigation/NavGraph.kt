@@ -32,6 +32,8 @@ import com.mad.susach.timeline.ui.timelineview.TimelineScreen
 import com.mad.susach.article.ui.ArticleView
 import com.mad.susach.search.ui.SearchScreen
 import com.mad.susach.saved.ui.SavedPostsActivity
+import com.mad.susach.comment.ui.CommentScreen
+import com.mad.susach.comment.ui.CommentViewModel
 
 
 sealed class Screen(val route: String) {
@@ -55,6 +57,9 @@ sealed class Screen(val route: String) {
     }
     
     data object SavedPosts : Screen("saved_posts")
+    data object Comments : Screen("comments/{eventId}") {
+        fun createRoute(eventId: String) = "comments/$eventId"
+    }
 }
 
 @Composable
@@ -191,6 +196,18 @@ fun AppNavigation() {
                     onResultClick = { eventId: String ->
                         navController.navigate(Screen.ArticleDetail.createRoute(eventId))
                     }
+                )
+            }
+            composable(
+                route = Screen.Comments.route,
+                arguments = listOf(navArgument("eventId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val eventId = backStackEntry.arguments?.getString("eventId") ?: ""
+                val viewModel: CommentViewModel = viewModel()
+                CommentScreen(
+                    eventId = eventId,
+                    onBack = { navController.popBackStack() },
+                    viewModel = viewModel
                 )
             }
         }

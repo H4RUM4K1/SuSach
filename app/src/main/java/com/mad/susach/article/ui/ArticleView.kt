@@ -30,6 +30,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.mad.susach.R
+import com.mad.susach.navigation.Screen
 import java.util.regex.Pattern
 
 private val NETWORK_URL_PATTERN = Pattern.compile(
@@ -85,7 +86,9 @@ fun ArticleView(eventId: String?, navController: NavController, viewModel: Artic
             )
         },
         bottomBar = {
-            BottomNavigationBar(navController)
+            eventId?.let { id ->
+                BottomNavigationBar(navController = navController, eventId = id)
+            }
         }
     ) { paddingValues ->
         when {
@@ -212,22 +215,26 @@ fun ArticleView(eventId: String?, navController: NavController, viewModel: Artic
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(navController: NavController, eventId: String) {
     NavigationBar {
         NavigationBarItem(
-            selected = true, // This should ideally be dynamic based on current route
+            selected = false,
             onClick = {
-                navController.navigate("home") {
-                    popUpTo("home") { inclusive = true }
+                navController.navigate(Screen.Home.route) {
+                    popUpTo(Screen.Home.route) { inclusive = true }
                     launchSingleTop = true
                 }
             },
-            icon = { Icon(Icons.Filled.Home, contentDescription = "Trang chủ") }, // Corrected direct usage
+            icon = { Icon(Icons.Filled.Home, contentDescription = "Trang chủ") },
             label = { Text("Trang chủ") }
         )
         NavigationBarItem(
             selected = false,
-            onClick = { /* navController.navigate("comments_route") */ },
+            onClick = { 
+                navController.navigate(Screen.Comments.createRoute(eventId)) {
+                    launchSingleTop = true
+                }
+            },
             icon = { Icon(Icons.AutoMirrored.Filled.Comment, contentDescription = "Bình luận") },
             label = { Text("Bình luận") }
         )
