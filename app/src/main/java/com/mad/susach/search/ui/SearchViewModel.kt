@@ -29,11 +29,11 @@ class SearchViewModel : ViewModel() {
     var selectedSort by mutableStateOf("A-Z")
         private set
 
-    private var currentQuery: String = "" // Store current query to re-apply search when era changes
+    private var currentQuery: String = ""
 
     init {
         fetchEras()
-        search("") // Initial search to load all events or based on default filters
+        search("")
     }
 
     private fun fetchEras() {
@@ -44,7 +44,7 @@ class SearchViewModel : ViewModel() {
 
     fun setSelectedEra(eraId: String?) {
         selectedEraId = eraId
-        search(currentQuery) // Re-run search with the new era and existing query
+        search(currentQuery)
     }
 
     fun setSort(sort: String) {
@@ -56,8 +56,8 @@ class SearchViewModel : ViewModel() {
         val current = _results.value
         val sorted = when (selectedSort) {
             "A-Z" -> current.sortedBy { it.name }
-            "Mới nhất" -> current.sortedByDescending { it.startDate } // Assuming Event has startDate
-            "Xưa nhất" -> current.sortedBy { it.startDate }         // Assuming Event has startDate
+            "Mới nhất" -> current.sortedByDescending { it.startDate }
+            "Xưa nhất" -> current.sortedBy { it.startDate }
             else -> current
         }
         _results.value = sorted
@@ -79,13 +79,13 @@ class SearchViewModel : ViewModel() {
             val finalResults = if (normalizedQuery.isNotEmpty()) {
                 eventsFilteredByEra.filter { event ->
                     event.name.lowercase().contains(normalizedQuery) ||
-                            (event.description.lowercase().contains(normalizedQuery)) // Removed unnecessary safe call as description is non-null
+                            (event.description.lowercase().contains(normalizedQuery))
                 }
             } else {
                 eventsFilteredByEra
             }
             _results.value = finalResults
-            sortResults() // Apply sorting after search
+            sortResults()
         }
     }
 }

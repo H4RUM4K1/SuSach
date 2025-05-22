@@ -31,7 +31,7 @@ import com.mad.susach.timeline.ui.eralselection.EraSelectionScreen
 import com.mad.susach.timeline.ui.timelineview.TimelineScreen
 import com.mad.susach.article.ui.ArticleView
 import com.mad.susach.search.ui.SearchScreen
-import com.mad.susach.saved.ui.SavedPostsScreen
+import com.mad.susach.saved.ui.SavedPostsActivity
 
 
 sealed class Screen(val route: String) {
@@ -142,7 +142,7 @@ fun AppNavigation() {
                         }
                     },
                     onNavigateToSavedPosts = {
-                        navController.navigate(Screen.SavedPosts.route)
+                        context.startActivity(Intent(context, SavedPostsActivity::class.java))
                     }
                 )
             }
@@ -193,9 +193,6 @@ fun AppNavigation() {
                     }
                 )
             }
-            composable(Screen.SavedPosts.route) {
-                SavedPostsScreen(navController = navController)
         }
     }
-}
 }

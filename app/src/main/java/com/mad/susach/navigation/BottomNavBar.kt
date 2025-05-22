@@ -41,20 +41,20 @@ fun MainBottomNavBar(
     val navItems = listOf(
         BottomNavItem(
             label = "Kiến thức",
-            selectedIcon = Icons.Filled.Book,
-            unselectedIcon = Icons.AutoMirrored.Filled.MenuBook,
+            unselectedIcon = Icons.Filled.Book,
+            selectedIcon = Icons.AutoMirrored.Filled.MenuBook,
             route = Screen.Home.route
         ),
         BottomNavItem(
             label = "Luyện tập",
-            selectedIcon = Icons.AutoMirrored.Filled.Rule, // Using auto-mirrored
-            unselectedIcon = Icons.AutoMirrored.Filled.Rule,
+            unselectedIcon = Icons.AutoMirrored.Filled.Rule, // Using auto-mirrored
+            selectedIcon = Icons.AutoMirrored.Filled.Rule,
             route = Screen.Practice.route
         ),
         BottomNavItem(
             label = "Người dùng",
-            selectedIcon = Icons.Filled.Person,
-            unselectedIcon = Icons.Filled.AccountCircle,
+            unselectedIcon = Icons.Filled.Person,
+            selectedIcon = Icons.Filled.AccountCircle,
             route = Screen.Profile.route
         )
     )

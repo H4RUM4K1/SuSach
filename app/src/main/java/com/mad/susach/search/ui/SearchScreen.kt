@@ -31,14 +31,11 @@ fun SearchScreen(
 ) {
     var query by remember { mutableStateOf(initialQuery) }
     val results by viewModel.results.collectAsState() 
-    // val eras by viewModel.eras.collectAsState() // eras is directly accessed from viewModel.eras.value in FilterDropdown
-    // val selectedEraId by remember { derivedStateOf { viewModel.selectedEraId } } // selectedEraId is directly accessed
-    // val selectedSort by remember { derivedStateOf { viewModel.selectedSort } } // selectedSort is directly accessed
 
     Column(
         Modifier
             .fillMaxSize()
-            .background(Color(0xFFfffbff)) // Changed background color
+            .background(Color(0xFFfffbff))
             .padding(horizontal = 16.dp)
     ) {
         Spacer(Modifier.height(16.dp))
@@ -113,7 +110,7 @@ fun SearchScreen(
             ) {
                 FilterDropdown(
                     label = "Sắp xếp:",
-                    selectedValue = viewModel.selectedSort, // Directly use viewModel.selectedSort
+                    selectedValue = viewModel.selectedSort,
                     items = listOf("A-Z", "Mới nhất", "Xưa nhất"),
                     onItemSelected = { viewModel.setSort(it) }
                 )
