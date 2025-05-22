@@ -9,10 +9,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Sort
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,7 +41,8 @@ class SavedPostsActivity : ComponentActivity() {
                         viewModel = viewModel,
                         onEventClick = { eventId ->
                             navController.navigate("article/$eventId")
-                        }
+                        },
+                        onBackClick = { finish() }
                     )
                 }
                 composable(
@@ -65,20 +67,61 @@ class SavedPostsActivity : ComponentActivity() {
     }
 }
 
+enum class SortOption {
+    Name,
+    SavedTime
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SavedPostsContent(
     viewModel: SavedPostsViewModel,
-    onEventClick: (String) -> Unit
+    onEventClick: (String) -> Unit,
+    onBackClick: () -> Unit
 ) {
     val savedPosts by viewModel.savedPosts.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
+    var showSortMenu by remember { mutableStateOf(false) }
+    var currentSort by remember { mutableStateOf(SortOption.SavedTime) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Bài viết đã lưu") }
+                title = { Text("Bài viết đã lưu") },
+                navigationIcon = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(Icons.Default.ArrowBack, "Back")
+                    }
+                },
+                actions = {
+                    Box {
+                        IconButton(onClick = { showSortMenu = true }) {
+                            Icon(Icons.Default.Sort, "Sort")
+                        }
+                        DropdownMenu(
+                            expanded = showSortMenu,
+                            onDismissRequest = { showSortMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Sắp xếp theo tên") },
+                                onClick = {
+                                    currentSort = SortOption.Name
+                                    viewModel.updateSort(SortOption.Name)
+                                    showSortMenu = false
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Sắp xếp theo thời gian lưu") },
+                                onClick = {
+                                    currentSort = SortOption.SavedTime
+                                    viewModel.updateSort(SortOption.SavedTime)
+                                    showSortMenu = false
+                                }
+                            )
+                        }
+                    }
+                }
             )
         }
     ) { padding ->
@@ -145,6 +188,9 @@ fun SavedEventItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column(
@@ -159,12 +205,12 @@ fun SavedEventItem(
                 overflow = TextOverflow.Ellipsis
             )
             Spacer(modifier = Modifier.height(8.dp))
-            event.description?.let { description ->
+            event.summary?.let { summary ->
                 Text(
-                    text = description,
+                    text = summary,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.Gray,
-                    maxLines = 3,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
             }

@@ -21,6 +21,8 @@ class SavedPostsViewModel(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error.asStateFlow()
 
+    private var currentSort = SortOption.SavedTime
+
     init {
         loadSavedPosts()
     }
@@ -30,7 +32,7 @@ class SavedPostsViewModel(
             try {
                 _isLoading.value = true
                 _error.value = null
-                val posts = repository.getSavedPosts()
+                val posts = repository.getSavedPosts(currentSort)
                 _savedPosts.value = posts
             } catch (e: Exception) {
                 _error.value = e.message
@@ -40,7 +42,8 @@ class SavedPostsViewModel(
         }
     }
 
-    fun refreshPosts() {
+    fun updateSort(sortOption: SortOption) {
+        currentSort = sortOption
         loadSavedPosts()
     }
 }

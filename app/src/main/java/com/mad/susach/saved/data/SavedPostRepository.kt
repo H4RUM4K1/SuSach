@@ -2,7 +2,9 @@ package com.mad.susach.saved.data
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.mad.susach.event.data.Event
+import com.mad.susach.saved.ui.SortOption
 import kotlinx.coroutines.tasks.await
 
 class SavedPostRepository {
@@ -61,15 +63,19 @@ class SavedPostRepository {
         }
     }
 
-    suspend fun getSavedPosts(): List<Event> {
+    suspend fun getSavedPosts(sortOption: SortOption = SortOption.SavedTime): List<Event> {
         try {
             val userId = auth.currentUser?.uid ?: return emptyList()
             
-            // Lấy danh sách các saved post, sử dụng index hiện có
-            val savedQuery = firestore.collection(COLLECTION_NAME)
+            // Tạo query dựa vào sortOption
+            val baseQuery = firestore.collection(COLLECTION_NAME)
                 .whereEqualTo("userId", userId)
-                .get()
-                .await()
+
+            // Áp dụng sắp xếp tương ứng
+            val savedQuery = when (sortOption) {
+                SortOption.Name -> baseQuery.orderBy("nameEvent", Query.Direction.ASCENDING)
+                SortOption.SavedTime -> baseQuery.orderBy("savedAt", Query.Direction.DESCENDING)
+            }.get().await()
                 
             if (savedQuery.isEmpty) {
                 return emptyList()
@@ -77,6 +83,7 @@ class SavedPostRepository {
 
             // Lấy thông tin chi tiết của từng event
             val eventsList = mutableListOf<Event>()
+            
             for (savedDoc in savedQuery.documents) {
                 val savedPost = savedDoc.toObject(SavedPost::class.java) ?: continue
                 try {
@@ -89,7 +96,6 @@ class SavedPostRepository {
                         eventsList.add(event.copy(id = eventDoc.id))
                     }
                 } catch (e: Exception) {
-                    // Bỏ qua event này nếu có lỗi
                     continue
                 }
             }
