@@ -16,6 +16,9 @@ import com.mad.susach.timeline.ui.eralselection.EraSelectionScreen
 import com.mad.susach.timeline.ui.timelineview.TimelineScreen
 import com.mad.susach.article.ui.ArticleView
 import com.mad.susach.search.ui.SearchScreen
+import com.mad.susach.saved.ui.SavedPostsScreen
+import com.mad.susach.profile.ui.ProfileScreen
+
 
 sealed class Screen(val route: String) {
     data object Login : Screen("login")
@@ -34,7 +37,7 @@ sealed class Screen(val route: String) {
     object ArticleDetail : Screen("article_detail_screen/{articleId}") {
         fun createRoute(articleId: String) = "article_detail_screen/$articleId"
     }
-
+    object SavedPosts : Screen("saved_posts")
 }
 
 @Composable
@@ -150,6 +153,9 @@ fun AppNavigation() {
                         navController.navigate(Screen.ArticleDetail.createRoute(eventId))
                     }
             )
+        }
+        composable(Screen.SavedPosts.route) {
+            SavedPostsScreen(navController = navController)
         }
     }
 }

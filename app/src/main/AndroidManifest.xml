@@ -26,5 +26,8 @@
             android:name=".profile.ui.ProfileActivity"
             android:exported="true"
             android:launchMode="singleTop" />
+        <activity 
+            android:name=".saved.ui.SavedPostsActivity"
+            android:exported="true" />
     </application>
 </manifest>

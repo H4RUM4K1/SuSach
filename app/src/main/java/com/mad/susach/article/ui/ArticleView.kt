@@ -74,9 +74,7 @@ fun ArticleView(eventId: String?, navController: NavController, viewModel: Artic
                         Icon(Icons.Filled.Share, contentDescription = "Share")
                     }
                     IconButton(onClick = { 
-                        uiState.event?.id?.let { eventId ->
-                            viewModel.toggleSavePost(eventId)
-                        }
+                        viewModel.toggleSavePost()
                     }) {
                         Icon(
                             imageVector = if (uiState.isSaved) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,

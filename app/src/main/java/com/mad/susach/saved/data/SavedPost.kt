@@ -3,7 +3,8 @@ package com.mad.susach.saved.data
 import com.google.firebase.Timestamp
 
 data class SavedPost(
-    val userId: String = "",
     val eventId: String = "",
-    val savedAt: Timestamp = Timestamp.now()
+    val nameEvent: String = "",
+    val userId: String = "",
+    val savedAt: com.google.firebase.Timestamp = com.google.firebase.Timestamp.now()
 )

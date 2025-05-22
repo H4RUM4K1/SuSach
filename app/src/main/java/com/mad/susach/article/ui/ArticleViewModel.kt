@@ -57,14 +57,23 @@ class ArticleViewModel(
         }
     }
 
-    fun toggleSavePost(eventId: String) {
+    fun toggleSavePost() {
         viewModelScope.launch {
             try {
                 val currentState = _uiState.value.isSaved
+                val event = _uiState.value.event
+
+                if (event == null) {
+                    _uiState.value = _uiState.value.copy(
+                        errorMessage = "Error: Event not found"
+                    )
+                    return@launch
+                }
+
                 if (currentState) {
-                    savedPostRepository.unsavePost(eventId)
+                    savedPostRepository.unsavePost(event.id)
                 } else {
-                    savedPostRepository.savePost(eventId)
+                    savedPostRepository.savePost(event)
                 }
                 _uiState.value = _uiState.value.copy(isSaved = !currentState)
             } catch (e: Exception) {

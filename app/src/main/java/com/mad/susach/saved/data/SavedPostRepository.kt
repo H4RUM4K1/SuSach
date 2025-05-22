@@ -8,60 +8,92 @@ import kotlinx.coroutines.tasks.await
 class SavedPostRepository {
     private val firestore = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private val COLLECTION_NAME = "saved_post"
 
-    suspend fun savePost(eventId: String) {
-        val userId = auth.currentUser?.uid ?: throw Exception("User not logged in")
-        firestore.collection("users")
-            .document(userId)
-            .collection("saved_events")
-            .document(eventId)
-            .set(hashMapOf(
-                "eventId" to eventId,
-                "savedAt" to System.currentTimeMillis()
-            )).await()
+    suspend fun savePost(event: Event) {
+        try {
+            val userId = auth.currentUser?.uid ?: throw Exception("User not logged in")
+            val savedPost = SavedPost(
+                eventId = event.id,
+                nameEvent = event.name,
+                userId = userId
+            )
+            
+            firestore.collection(COLLECTION_NAME)
+                .add(savedPost)
+                .await()
+        } catch (e: Exception) {
+            throw Exception("Failed to save post: ${e.message}")
+        }
     }
 
     suspend fun unsavePost(eventId: String) {
-        val userId = auth.currentUser?.uid ?: throw Exception("User not logged in")
-        firestore.collection("users")
-            .document(userId)
-            .collection("saved_events")
-            .document(eventId)
-            .delete()
-            .await()
+        try {
+            val userId = auth.currentUser?.uid ?: throw Exception("User not logged in")
+            
+            val query = firestore.collection(COLLECTION_NAME)
+                .whereEqualTo("eventId", eventId)
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+                
+            for (document in query.documents) {
+                document.reference.delete().await()
+            }
+        } catch (e: Exception) {
+            throw Exception("Failed to unsave post: ${e.message}")
+        }
     }
 
     suspend fun isPostSaved(eventId: String): Boolean {
-        val userId = auth.currentUser?.uid ?: return false
-        return firestore.collection("users")
-            .document(userId)
-            .collection("saved_events")
-            .document(eventId)
-            .get()
-            .await()
-            .exists()
+        try {
+            val userId = auth.currentUser?.uid ?: return false
+            
+            val query = firestore.collection(COLLECTION_NAME)
+                .whereEqualTo("eventId", eventId)
+                .whereEqualTo("userId", userId)
+                .get()
+                .await()
+                
+            return !query.isEmpty
+        } catch (e: Exception) {
+            return false
+        }
     }
 
     suspend fun getSavedPosts(): List<Event> {
-        val userId = auth.currentUser?.uid ?: return emptyList()
-        
-        // Get all saved event IDs
-        val savedEventIds = firestore.collection("users")
-            .document(userId)
-            .collection("saved_events")
-            .get()
-            .await()
-            .documents
-            .map { it.id }
-
-        // Fetch full event data for each saved ID
-        return savedEventIds.mapNotNull { eventId ->
-            firestore.collection("events")
-                .document(eventId)
+        try {
+            val userId = auth.currentUser?.uid ?: return emptyList()
+            
+            // Lấy danh sách các saved post
+            val savedQuery = firestore.collection(COLLECTION_NAME)
+                .whereEqualTo("userId", userId)
+                .orderBy("savedAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .get()
                 .await()
-                .toObject(Event::class.java)
-                ?.copy(id = eventId)
+                
+            // Lấy thông tin chi tiết của từng event
+            val eventsList = mutableListOf<Event>()
+            for (savedDoc in savedQuery.documents) {
+                val savedPost = savedDoc.toObject(SavedPost::class.java) ?: continue
+                try {
+                    val eventDoc = firestore.collection("events")
+                        .document(savedPost.eventId)
+                        .get()
+                        .await()
+                        
+                    eventDoc.toObject(Event::class.java)?.let { event ->
+                        eventsList.add(event.copy(id = eventDoc.id))
+                    }
+                } catch (e: Exception) {
+                    // Log error but continue with other events
+                    continue
+                }
+            }
+            
+            return eventsList
+        } catch (e: Exception) {
+            throw Exception("Failed to get saved posts: ${e.message}")
         }
     }
 }

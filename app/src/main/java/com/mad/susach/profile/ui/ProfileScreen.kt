@@ -21,7 +21,8 @@ import com.mad.susach.R
 @Composable
 fun ProfileScreen(
     viewModel: ProfileViewModel,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onNavigateToSavedPosts: () -> Unit // Add navigation callback
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -63,7 +64,10 @@ fun ProfileScreen(
                 text = "Thông tin cá nhân",
                 onClick = { viewModel.showDetailedProfile() }
             )
-            ProfileOptionItem("Bài viết đã lưu")
+            ProfileOptionItem(
+                text = "Bài viết đã lưu",
+                onClick = onNavigateToSavedPosts
+            )
             ProfileOptionItem("Thành tích")
             ProfileOptionItem("Cài đặt")
 
