@@ -25,6 +25,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.background
+import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -50,6 +56,11 @@ fun isNetworkUrl(url: String?): Boolean {
 fun ArticleView(eventId: String?, navController: NavController, viewModel: ArticleViewModel = viewModel()) {
     val uiState = viewModel.uiState.collectAsState().value
     val currentEvent = uiState.event // Store event in a local variable for safe usage
+
+    // State cho tuỳ chỉnh
+    var showSettings by remember { mutableStateOf(false) }
+    var bgColor by remember { mutableStateOf(Color.White) }
+    var fontSize by remember { mutableStateOf(16f) }
 
     LaunchedEffect(eventId) {
         if (eventId != null) {
@@ -87,10 +98,24 @@ fun ArticleView(eventId: String?, navController: NavController, viewModel: Artic
         },
         bottomBar = {
             eventId?.let { id ->
-                BottomNavigationBar(navController = navController, eventId = id)
+                BottomNavigationBar(
+                    navController = navController,
+                    eventId = id,
+                    onCustomizeClick = { showSettings = true }
+                )
             }
         }
     ) { paddingValues ->
+        // Hiển thị dialog tuỳ chỉnh nếu cần
+        ArticleSettingsDialog(
+            show = showSettings,
+            currentBgColor = bgColor,
+            currentFontSize = fontSize,
+            onBgColorChange = { bgColor = it },
+            onFontSizeChange = { fontSize = it },
+            onDismiss = { showSettings = false }
+        )
+
         when {
             uiState.isLoading -> {
                 Box(
@@ -120,21 +145,26 @@ fun ArticleView(eventId: String?, navController: NavController, viewModel: Artic
                         .verticalScroll(scrollState)
                         .padding(paddingValues)
                         .padding(16.dp)
+                        .background(bgColor)
                 ) {
                     Text(
                         text = currentEvent.name,
-                        style = MaterialTheme.typography.headlineSmall.copy(
-                            fontWeight = FontWeight.Medium
-                        )
+//                        style = MaterialTheme.typography.headlineSmall.copy(
+//                            fontWeight = FontWeight.Medium
+//                        )
+                        fontSize = (fontSize + 6).sp,
+                        fontWeight = FontWeight.Medium
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
                         text = currentEvent.summary,
-                        style = MaterialTheme.typography.titleMedium.copy(
-                           fontWeight = FontWeight.Bold
-                        )
+//                        style = MaterialTheme.typography.titleMedium.copy(
+//                           fontWeight = FontWeight.Bold
+//                        )
+                        fontSize = (fontSize).sp,
+                        fontWeight = FontWeight.Bold
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -185,9 +215,11 @@ fun ArticleView(eventId: String?, navController: NavController, viewModel: Artic
                         ) {
                             Text(
                                 text = currentEvent.imageContent,
-                                style = MaterialTheme.typography.bodySmall.copy(
-                                    fontStyle = FontStyle.Italic
-                                ),
+//                                style = MaterialTheme.typography.bodySmall.copy(
+//                                    fontStyle = FontStyle.Italic
+//                                ),
+                                fontSize = 13.sp,
+                                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
@@ -196,7 +228,8 @@ fun ArticleView(eventId: String?, navController: NavController, viewModel: Artic
 
                     Text(
                         text = currentEvent.contents,
-                        style = MaterialTheme.typography.bodyMedium 
+//                        style = MaterialTheme.typography.bodyMedium
+                        fontSize = fontSize.sp
                     )
                 }
             }
@@ -215,7 +248,11 @@ fun ArticleView(eventId: String?, navController: NavController, viewModel: Artic
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController, eventId: String) {
+fun BottomNavigationBar(
+    navController: NavController,
+    eventId: String,
+    onCustomizeClick: () -> Unit = {}
+) {
     NavigationBar {
         NavigationBarItem(
             selected = false,
@@ -240,7 +277,7 @@ fun BottomNavigationBar(navController: NavController, eventId: String) {
         )
         NavigationBarItem(
             selected = false,
-            onClick = { /* navController.navigate("settings_route") */ },
+            onClick = { onCustomizeClick() },
             icon = { Icon(Icons.Filled.Settings, contentDescription = "Tùy chỉnh") }, // Corrected direct usage
             label = { Text("Tùy chỉnh") }
         )

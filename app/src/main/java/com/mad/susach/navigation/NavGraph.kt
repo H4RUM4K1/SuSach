@@ -34,7 +34,7 @@ import com.mad.susach.search.ui.SearchScreen
 import com.mad.susach.saved.ui.SavedPostsActivity
 import com.mad.susach.comment.ui.CommentScreen
 import com.mad.susach.comment.ui.CommentViewModel
-
+import com.mad.susach.mapVN.MapView
 
 sealed class Screen(val route: String) {
     data object Login : Screen("login")
@@ -60,6 +60,7 @@ sealed class Screen(val route: String) {
     data object Comments : Screen("comments/{eventId}") {
         fun createRoute(eventId: String) = "comments/$eventId"
     }
+    data object MapView : Screen("map_view")
 }
 
 @Composable
@@ -209,6 +210,9 @@ fun AppNavigation() {
                     onBack = { navController.popBackStack() },
                     viewModel = viewModel
                 )
+            }
+            composable(Screen.MapView.route) {
+                com.mad.susach.mapVN.MapView(navController)
             }
         }
     }

@@ -38,6 +38,7 @@ import com.mad.susach.profile.ui.ProfileScreen
 import com.mad.susach.profile.ui.ProfileViewModel
 import com.mad.susach.saved.ui.SavedPostsActivity
 import com.mad.susach.auth.login.ui.LoginActivity
+import com.mad.susach.mapVN.MapView
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -160,7 +161,7 @@ fun HomeScreen(
             item {
                 ExploreSection(
                     onTimelineClick = { navController.navigate(Screen.EraSelection.route) },
-                    onMapClick = { /* TODO: Implement map click */ },
+                    onMapClick = { navController.navigate(Screen.MapView.route) },
                     onRandomClick = { navController.navigate(Screen.RandomArticle.route) }
                 )
                 Spacer(Modifier.height(48.dp))
