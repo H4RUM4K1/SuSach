@@ -1,5 +1,6 @@
 package com.mad.susach.navigation
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -36,16 +37,58 @@ import com.mad.susach.R
 import com.mad.susach.profile.ui.ProfileScreen
 import com.mad.susach.profile.ui.ProfileViewModel
 import com.mad.susach.saved.ui.SavedPostsActivity
+import com.mad.susach.auth.login.ui.LoginActivity
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Surface(
-                modifier = Modifier.fillMaxSize(),
-                color = Color(0xFFfffbff)
+            var selectedTab by remember { mutableStateOf(0) }
+            val profileViewModel: ProfileViewModel = viewModel()
+            val context = LocalContext.current
+            
+            Box(
+                modifier = Modifier.background(Color(0xFFFDF6F0))
             ) {
-                AppNavigation()
+                Column(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxWidth()
+                    ) {
+                        when (selectedTab) {
+                            0 -> HomeScreen(
+                                username = "User",
+                                notificationCount = 0,
+                                onNotificationClick = {},
+                                onSearchClick = {},
+                                navController = rememberNavController()
+                            )
+                            1 -> { /* Màn hình Luyện tập */ }
+                            2 -> ProfileScreen(
+                                viewModel = profileViewModel,
+                                onLogout = {
+                                    profileViewModel.logout()
+                                    context.startActivity(
+                                        Intent(context, LoginActivity::class.java).apply {
+                                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                        }
+                                    )
+                                },
+                                onNavigateToSavedPosts = {
+                                    context.startActivity(Intent(context, SavedPostsActivity::class.java))
+                                }
+                            )
+                        }
+                    }
+                    
+                    MainBottomNavBar(
+                        selected = selectedTab,
+                        onSelected = { selectedTab = it }
+                    )
+                }
             }
         }
     }
@@ -66,134 +109,110 @@ fun HomeScreen(
     val saved = remember {
         listOf(
             SavedItem("Nhà Triệu", R.drawable.nhatrieu, "179 TCN - 111 TCN"),
-            SavedItem("Bắc thuộc lần thứ nhất", R.drawable.bacthuoclan1, "111 TCN - 40")        )
+            SavedItem("Bắc thuộc lần thứ nhất", R.drawable.bacthuoclan1, "111 TCN - 40")
+        )
     }
     
-    var selectedNav by remember { mutableStateOf(0) }
     var searchText by remember { mutableStateOf("Tìm gì đó...") }
 
     Box(
-        Modifier
-            .fillMaxSize()
-            .background(Color(0xFFFDF6F0))
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
     ) {
-        when (selectedNav) {
-            0 -> {
-                // Hiển thị màn hình khám phá
-                LazyColumn(
-                    Modifier
-                        .fillMaxWidth(0.84f)
-                        .align(Alignment.TopCenter)
-                        .padding(bottom = 56.dp)
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 56.dp)
+        ) {
+            item {
+                Spacer(Modifier.height(30.dp))
+                // Lời chàochào
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    item {
-                        Spacer(Modifier.height(30.dp))
-                        // Lời chàochào
-                        Row(
-                            Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "Hôm nay bạn muốn\ntìm hiểu gì, $username?",
-                                fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold,
-                                fontFamily = FontFamily(Font(R.font.sitka_small_semibold)),
-                                modifier = Modifier.weight(1f)
-                            )
+                    Text(
+                        text = "Hôm nay bạn muốn\ntìm hiểu gì, $username?",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = FontFamily(Font(R.font.sitka_small_semibold)),
+                        modifier = Modifier.weight(1f)
+                    )
 
-                            // Thông báo
-                            Box {
-                                IconButton(onClick = onNotificationClick) {
-                                    Icon(
-                                        imageVector = Icons.Default.Notifications,
-                                        contentDescription = "Thông báo",
-                                        tint = Color(0xFFFF6600),
-                                        modifier = Modifier.size(36.dp)
-                                    )
-                                }
-                                if (notificationCount > 0) {
-                                    Box(
-                                        modifier = Modifier
-                                            .align(Alignment.TopEnd)
-                                            .offset(x = (-2).dp, y = 2.dp)
-                                            .size(18.dp)
-                                            .background(Color.Red, shape = CircleShape),
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        Text(
-                                            text = if (notificationCount > 99) "99+" else notificationCount.toString(),
-                                            color = Color.White,
-                                            fontSize = 15.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
-                                }
+                    // Thông báo
+                    Box {
+                        IconButton(onClick = onNotificationClick) {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = "Thông báo",
+                                tint = Color(0xFFFF6600),
+                                modifier = Modifier.size(36.dp)
+                            )
+                        }
+                        if (notificationCount > 0) {
+                            Box(
+                                modifier = Modifier
+                                    .align(Alignment.TopEnd)
+                                    .offset(x = (-2).dp, y = 2.dp)
+                                    .size(18.dp)
+                                    .background(Color.Red, shape = CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = if (notificationCount > 99) "99+" else notificationCount.toString(),
+                                    color = Color.White,
+                                    fontSize = 15.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
                             }
                         }
-
-                        Spacer(Modifier.height(18.dp))
-                        
-                        // Thanh tìm kiếm
-                        SearchBar(
-                            placeholder = searchText,
-                            onClick = { onSearchClick(searchText) }
-                        )
-                        Spacer(Modifier.height(18.dp))
-
-                        // "Đã lưu"
-                        Text("Đã lưu", fontWeight = FontWeight.SemiBold, fontSize = 21.sp)
-                        Spacer(Modifier.height(12.dp))
-                        SavedCarousel(items = saved, onClick = onNotificationClick)
-                        Spacer(Modifier.height(12.dp))
-                    }
-
-                    stickyHeader {
-                        // "Khám phá"
-                        Text(
-                            "Khám phá",
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 21.sp,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Color(0xFFFDF6F0))
-                                .padding(vertical = 12.dp)
-                        )
-                    }
-
-                    // 3 nút khám phá
-                    item {
-                        ExploreSection(
-                            onTimelineClick = { navController.navigate(Screen.EraSelection.route) },
-                            onMapClick = { /* TODO: Implement map click */ },
-                            onRandomClick = { navController.navigate(Screen.RandomArticle.route) }
-                        )
-                        Spacer(Modifier.height(48.dp))
                     }
                 }
+
+                Spacer(Modifier.height(18.dp))
+                
+                // Thanh tìm kiếm
+                SearchBar(
+                    placeholder = searchText,
+                    onClick = { onSearchClick(searchText) }
+                )
+                Spacer(Modifier.height(18.dp))
+
+                // "Đã lưu"
+                Text(
+                    "Đã lưu", 
+                    fontWeight = FontWeight.SemiBold, 
+                    fontSize = 21.sp
+                )
+                Spacer(Modifier.height(12.dp))
+                SavedCarousel(items = saved, onClick = onNotificationClick)
+                Spacer(Modifier.height(12.dp))
             }
-            1 -> {
-                // Hiển thị màn hình luyện tập
-                // ...existing code for practice tab...
-            }
-            2 -> {
-                // Hiển thị màn hình người dùng
-                ProfileScreen(
-                    viewModel = viewModel(),
-                    onLogout = {
-                        // Handle logout
-                    },
-                    onNavigateToSavedPosts = {
-                        navController.navigate(Screen.SavedPosts.route)
-                    }
+
+            stickyHeader {
+                // "Khám phá"
+                Text(
+                    "Khám phá",
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 21.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFFFDF6F0))
+                        .padding(vertical = 12.dp)
                 )
             }
-        }
 
-        MainBottomNavBar(
-            selected = selectedNav,
-            onSelected = { selectedNav = it },
-            modifier = Modifier.align(Alignment.BottomCenter)
-        )
+            item {
+                ExploreSection(
+                    onTimelineClick = { navController.navigate(Screen.EraSelection.route) },
+                    onMapClick = { /* TODO: Implement map click */ },
+                    onRandomClick = { navController.navigate(Screen.RandomArticle.route) }
+                )
+                Spacer(Modifier.height(48.dp))
+            }
+        }
     }
 }
 

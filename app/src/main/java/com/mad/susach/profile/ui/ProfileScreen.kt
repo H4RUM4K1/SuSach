@@ -22,7 +22,7 @@ import com.mad.susach.R
 fun ProfileScreen(
     viewModel: ProfileViewModel,
     onLogout: () -> Unit,
-    onNavigateToSavedPosts: () -> Unit // Add navigation callback
+    onNavigateToSavedPosts: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -70,23 +70,11 @@ fun ProfileScreen(
             )
             ProfileOptionItem("Thành tích")
             ProfileOptionItem("Cài đặt")
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            // Logout Button
-            Button(
+            ProfileOptionItem(
+                text = "Đăng xuất",
                 onClick = onLogout,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFFFF6600)
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 32.dp, vertical = 16.dp)
-            ) {
-                Text("Đăng xuất", color = Color.White)
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
+                textColor = Color(0xFFFF6600)
+            )
         }
     }
 }
@@ -94,13 +82,14 @@ fun ProfileScreen(
 @Composable
 private fun ProfileOptionItem(
     text: String,
-    onClick: () -> Unit = {}  // Add onClick parameter
+    onClick: () -> Unit = {},
+    textColor: Color = Color(0xFF1A1A1A)
 ) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clickable(onClick = onClick),  // Add clickable modifier
+            .clickable(onClick = onClick),
         color = Color.White,
         shadowElevation = 2.dp,
         shape = MaterialTheme.shapes.medium
@@ -115,7 +104,7 @@ private fun ProfileOptionItem(
             Text(
                 text = text,
                 fontSize = 16.sp,
-                color = Color(0xFF1A1A1A)
+                color = textColor
             )
         }
     }

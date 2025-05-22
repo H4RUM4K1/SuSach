@@ -25,71 +25,52 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun MainBottomNavBar(
-        selected: Int,
-        onSelected: (Int) -> Unit,
-        modifier: Modifier = Modifier,
-        context: Context? = null
+    selected: Int,
+    onSelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val ctx = context ?: LocalContext.current
+    val navItems = listOf(
+        Triple("Kiến thức", Icons.AutoMirrored.Filled.MenuBook, Icons.Filled.Book),
+        Triple("Luyện tập", Icons.AutoMirrored.Filled.Rule, Icons.AutoMirrored.Filled.Rule),
+        Triple("Người dùng", Icons.Filled.AccountCircle, Icons.Filled.Person)
+    )
 
-    val navItems =
-            listOf(
-                    Triple("Kiến thức", Icons.AutoMirrored.Filled.MenuBook, Icons.Filled.Book),
-                    Triple("Luyện tập", Icons.AutoMirrored.Filled.Rule, Icons.AutoMirrored.Filled.Rule),
-                    Triple("Người dùng", Icons.Filled.AccountCircle, Icons.Filled.Person)
-            )
-
-    NavigationBar(modifier = modifier, containerColor = Color(0xFFFFF3E0), tonalElevation = 8.dp) {
+    NavigationBar(
+        modifier = modifier,
+        containerColor = Color(0xFFFFF3E0),
+        tonalElevation = 8.dp
+    ) {
         navItems.forEachIndexed { index, triple ->
             val (label, selectedIcon, unselectedIcon) = triple
             val isSelected = selected == index
 
             NavigationBarItem(
-                    selected = isSelected,
-                    onClick = {
-                        onSelected(index)
-                        handleNavBarNavigation(ctx, index)
-                    },
-                    icon = {
-                        Icon(
-                                imageVector = if (isSelected) selectedIcon else unselectedIcon,
-                                contentDescription = label,
-                                tint = if (isSelected) Color(0xFFFF6600) else Color(0xFF3A3939),
-                                modifier = Modifier.size(32.dp)
-                        )
-                    },
-                    label = {
-                        Text(
-                                text = label,
-                                color = if (isSelected) Color(0xFFFF6600) else Color(0xFF3A3939),
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
-                                fontSize = 14.sp
-                        )
-                    },
-                    colors =
-                            NavigationBarItemDefaults.colors(
-                                    indicatorColor = Color.Transparent,
-                                    selectedIconColor = Color(0xFFFF6600),
-                                    unselectedIconColor = Color(0xFF3A3939),
-                                    selectedTextColor = Color(0xFFFF6600),
-                                    unselectedTextColor = Color(0xFF3A3939)
-                            )
+                selected = isSelected,
+                onClick = { onSelected(index) },
+                icon = {
+                    Icon(
+                        imageVector = if (isSelected) selectedIcon else unselectedIcon,
+                        contentDescription = label,
+                        tint = if (isSelected) Color(0xFFFF6600) else Color(0xFF3A3939),
+                        modifier = Modifier.size(32.dp)
+                    )
+                },
+                label = {
+                    Text(
+                        text = label,
+                        color = if (isSelected) Color(0xFFFF6600) else Color(0xFF3A3939),
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal,
+                        fontSize = 14.sp
+                    )
+                },
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color.Transparent,
+                    selectedIconColor = Color(0xFFFF6600),
+                    unselectedIconColor = Color(0xFF3A3939),
+                    selectedTextColor = Color(0xFFFF6600),
+                    unselectedTextColor = Color(0xFF3A3939)
+                )
             )
-        }
-    }
-}
-
-private fun handleNavBarNavigation(ctx: Context, index: Int) {
-    when (index) {
-        0 -> {
-            val intent = Intent(ctx, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            ctx.startActivity(intent)
-        }
-        2 -> {
-            val intent = Intent(ctx, com.mad.susach.profile.ui.ProfileActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-            ctx.startActivity(intent)
         }
     }
 }
