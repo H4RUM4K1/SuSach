@@ -25,10 +25,17 @@ class CommentViewModel(
         viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             try {
-                val comments = repository.getCommentsForEvent(eventId)
-                _uiState.value = CommentUiState(comments = comments)
+                repository.getCommentsForEvent(eventId).collect { comments ->
+                    _uiState.value = CommentUiState(
+                        comments = comments,
+                        isLoading = false
+                    )
+                }
             } catch (e: Exception) {
-                _uiState.value = CommentUiState(error = e.message)
+                _uiState.value = _uiState.value.copy(
+                    error = e.message,
+                    isLoading = false
+                )
             }
         }
     }
@@ -42,11 +49,14 @@ class CommentViewModel(
                     return@launch
                 }
 
+                // Get username from email
+                val userName = currentUser.email?.substringBefore("@") ?: "Anonymous"
+
                 val comment = Comment(
                     id = "", // Will be set by repository
                     eventId = eventId,
                     userId = currentUser.uid,
-                    userName = currentUser.displayName ?: "Anonymous",
+                    userName = userName,
                     content = content,
                     timestamp = System.currentTimeMillis()
                 )
