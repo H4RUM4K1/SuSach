@@ -32,8 +32,8 @@ class SavedPostRepository {
             val userId = auth.currentUser?.uid ?: throw Exception("User not logged in")
             
             val query = firestore.collection(COLLECTION_NAME)
-                .whereEqualTo("eventId", eventId)
                 .whereEqualTo("userId", userId)
+                .whereEqualTo("eventId", eventId)
                 .get()
                 .await()
                 
@@ -50,8 +50,8 @@ class SavedPostRepository {
             val userId = auth.currentUser?.uid ?: return false
             
             val query = firestore.collection(COLLECTION_NAME)
-                .whereEqualTo("eventId", eventId)
                 .whereEqualTo("userId", userId)
+                .whereEqualTo("eventId", eventId)
                 .get()
                 .await()
                 
@@ -65,13 +65,16 @@ class SavedPostRepository {
         try {
             val userId = auth.currentUser?.uid ?: return emptyList()
             
-            // Lấy danh sách các saved post
+            // Lấy danh sách các saved post, sử dụng index hiện có
             val savedQuery = firestore.collection(COLLECTION_NAME)
                 .whereEqualTo("userId", userId)
-                .orderBy("savedAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .get()
                 .await()
                 
+            if (savedQuery.isEmpty) {
+                return emptyList()
+            }
+
             // Lấy thông tin chi tiết của từng event
             val eventsList = mutableListOf<Event>()
             for (savedDoc in savedQuery.documents) {
@@ -86,7 +89,7 @@ class SavedPostRepository {
                         eventsList.add(event.copy(id = eventDoc.id))
                     }
                 } catch (e: Exception) {
-                    // Log error but continue with other events
+                    // Bỏ qua event này nếu có lỗi
                     continue
                 }
             }

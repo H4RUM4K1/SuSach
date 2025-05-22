@@ -6,19 +6,20 @@ import com.mad.susach.event.data.Event
 import com.mad.susach.saved.data.SavedPostRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SavedPostsViewModel(
     private val repository: SavedPostRepository = SavedPostRepository()
 ) : ViewModel() {
-    data class SavedPostsUiState(
-        val savedEvents: List<Event> = emptyList(),
-        val isLoading: Boolean = true,
-        val error: String? = null
-    )
+    private val _savedPosts = MutableStateFlow<List<Event>>(emptyList())
+    val savedPosts: StateFlow<List<Event>> = _savedPosts.asStateFlow()
 
-    private val _uiState = MutableStateFlow(SavedPostsUiState())
-    val uiState: StateFlow<SavedPostsUiState> = _uiState
+    private val _isLoading = MutableStateFlow(true)
+    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
+    private val _error = MutableStateFlow<String?>(null)
+    val error: StateFlow<String?> = _error.asStateFlow()
 
     init {
         loadSavedPosts()
@@ -27,17 +28,19 @@ class SavedPostsViewModel(
     private fun loadSavedPosts() {
         viewModelScope.launch {
             try {
-                val savedPosts = repository.getSavedPosts()
-                _uiState.value = SavedPostsUiState(
-                    savedEvents = savedPosts,
-                    isLoading = false
-                )
+                _isLoading.value = true
+                _error.value = null
+                val posts = repository.getSavedPosts()
+                _savedPosts.value = posts
             } catch (e: Exception) {
-                _uiState.value = SavedPostsUiState(
-                    error = e.message,
-                    isLoading = false
-                )
+                _error.value = e.message
+            } finally {
+                _isLoading.value = false
             }
         }
+    }
+
+    fun refreshPosts() {
+        loadSavedPosts()
     }
 }
