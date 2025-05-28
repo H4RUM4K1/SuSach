@@ -188,7 +188,6 @@ private fun EventImageSection(event: Event) {
                     .clip(MaterialTheme.shapes.medium)
             )
         } else {
-
             // Nếu không phải là URL mạng, sử dụng drawable resource
             val imageResId = remember(imageUrl, context) {
                 val id = context.resources.getIdentifier(imageUrl, "drawable", context.packageName)

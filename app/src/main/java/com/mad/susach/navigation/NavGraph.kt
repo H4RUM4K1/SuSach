@@ -7,9 +7,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -22,6 +26,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.mad.susach.auth.login.ui.LoginContent
 import com.mad.susach.auth.register.ui.RegisterScreen
 import com.mad.susach.auth.login.ui.LoginActivity
@@ -121,10 +126,37 @@ fun AppNavigation() {
             )
         }
             composable(Screen.Home.route) {
+                var fullName by remember { mutableStateOf<String?>(null) }
+                val user = FirebaseAuth.getInstance().currentUser
+                val uid = user?.uid
+                LaunchedEffect(uid) {
+                    if (uid != null) {
+                        FirebaseFirestore.getInstance().collection("users").document(uid)
+                            .get()
+                            .addOnSuccessListener { doc ->
+                                fullName = doc.getString("fullName")
+                            }
+                            .addOnFailureListener {
+                                fullName = null
+                            }
+                    } else {
+                        fullName = null
+                    }
+                }
+                val username = if (fullName.isNullOrBlank()) {
+                    "Khách"
+                } else {
+                    val parts = fullName!!.split(" ").filter { it.isNotBlank() }
+                    when {
+                        parts.size >= 2 -> parts.takeLast(2).joinToString(" ")
+                        parts.isNotEmpty() -> parts.first()
+                        else -> "Khách"
+                    }
+                }
                 HomeScreen(
-                    username = "GuestGuest",
+                    username = username,
                     notificationCount = 0,
-                    onNotificationClick = { /* TODO */ },
+                    onNotificationClick = {},
                     onSearchClick = { query ->
                         navController.navigate(Screen.Search.createRoute(query))
                     },

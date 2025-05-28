@@ -164,7 +164,7 @@ fun HomeScreen(
                     onMapClick = { navController.navigate(Screen.MapView.route) },
                     onRandomClick = { navController.navigate(Screen.RandomArticle.route) }
                 )
-                Spacer(Modifier.height(48.dp))
+                Spacer(Modifier.height(24.dp))
             }
         }
     }

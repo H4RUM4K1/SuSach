@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mad.susach.R
-import com.mad.susach.timeline.data.Era
 
 @Composable
 fun EraSelectionScreen(
@@ -53,7 +52,7 @@ fun EraSelectionScreen(
                 }
                 error != null -> {
                     Text(
-                        text = error ?: "Unknown error",
+                        text = error ?: "Lỗi không xác định.",
                         color = MaterialTheme.colorScheme.error,
                         modifier = Modifier
                             .fillMaxSize()
@@ -62,7 +61,7 @@ fun EraSelectionScreen(
                 }
                 eras.isEmpty() -> {
                     Text(
-                        text = "No eras found.",
+                        text = "Không tìm thấy thời kỳ.",
                         modifier = Modifier
                             .fillMaxSize()
                             .wrapContentSize(Alignment.Center)

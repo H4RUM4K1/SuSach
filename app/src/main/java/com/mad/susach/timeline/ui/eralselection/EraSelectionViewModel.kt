@@ -29,7 +29,7 @@ class EraSelectionViewModel(
         loadEras()
     }
 
-    // Lấy danh sách eraera từ Firestore
+    // Lấy danh sách era từ Firestore
     private fun loadEras() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -38,7 +38,7 @@ class EraSelectionViewModel(
                 val eras = eraRepository.getEras()
                 _eras.value = eras
             } catch (e: Exception) {
-                _error.value = "Failed to load eras: ${e.message}"
+                _error.value = "Lỗi tải thời kỳ: ${e.message}"
             } finally {
                 _isLoading.value = false
             }

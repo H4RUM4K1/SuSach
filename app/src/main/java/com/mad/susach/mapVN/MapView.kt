@@ -68,9 +68,7 @@ fun MapView(navController: NavController, viewModel: MapViewModel = viewModel())
                 )
             )
         },
-        bottomBar = {
-            BottomNavigationBar(navController)
-        },
+
         containerColor = Color(0xFFFFF3E6)
     ) { innerPadding ->
         Box(
@@ -175,57 +173,5 @@ fun MapView(navController: NavController, viewModel: MapViewModel = viewModel())
                 }
             }
         }
-    }
-}
-
-@Composable
-fun BottomNavigationBar(navController: NavController) {
-    val orange = Color(0xFFFF6600)
-    NavigationBar(
-        containerColor = Color.White
-    ) {
-        NavigationBarItem(
-            selected = true,
-            onClick = {
-                navController.navigate("home") {
-                    popUpTo("home") { inclusive = true }
-                    launchSingleTop = true
-                }
-            },
-            icon = {
-                Box(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .background(
-                            color = orange,
-                            shape = CircleShape
-                        ),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Home,
-                        contentDescription = "Trang chủ",
-                        tint = Color.White,
-                        modifier = Modifier.size(22.dp)
-                    )
-                }
-            },
-            label = { Text("Trang chủ", color = orange) },
-            colors = NavigationBarItemDefaults.colors(
-                indicatorColor = Color.Transparent // Không cần nền cam bo tròn phía dưới
-            )
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = { /* Handle Comments */ },
-            icon = { Icon(Icons.Default.Comment, contentDescription = "Bình luận", tint = orange) },
-            label = { Text("Bình luận", color = orange) }
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = { /* Handle Customize */ },
-            icon = { Icon(Icons.Default.Settings, contentDescription = "Tùy chỉnh", tint = orange) },
-            label = { Text("Tùy chỉnh", color = orange) }
-        )
     }
 }

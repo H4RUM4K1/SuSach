@@ -55,7 +55,7 @@ fun isNetworkUrl(url: String?): Boolean {
 @Composable
 fun ArticleView(eventId: String?, navController: NavController, viewModel: ArticleViewModel = viewModel()) {
     val uiState = viewModel.uiState.collectAsState().value
-    val currentEvent = uiState.event // Store event in a local variable for safe usage
+    val currentEvent = uiState.event
 
     // State cho tuỳ chỉnh
     var showSettings by remember { mutableStateOf(false) }
@@ -82,7 +82,26 @@ fun ArticleView(eventId: String?, navController: NavController, viewModel: Artic
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* Handle share */ }) {
+                    val context = LocalContext.current
+                    IconButton(onClick = { 
+                        // Sharing function
+                        currentEvent?.let { event ->
+                            val shareIntent = android.content.Intent().apply {
+                                action = android.content.Intent.ACTION_SEND
+                                putExtra(
+                                    android.content.Intent.EXTRA_TEXT,
+                                    "${event.name}\n\n${event.summary}\n\n${event.contents}"
+                                )
+                                type = "text/plain"
+                            }
+                            context.startActivity(
+                                android.content.Intent.createChooser(
+                                    shareIntent,
+                                    "Chia sẻ bài viết"
+                                )
+                            )
+                        }
+                    }) {
                         Icon(Icons.Filled.Share, contentDescription = "Share")
                     }
                     IconButton(onClick = { 
