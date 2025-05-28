@@ -135,131 +135,136 @@ fun ArticleView(eventId: String?, navController: NavController, viewModel: Artic
             onDismiss = { showSettings = false }
         )
 
-        when {
-            uiState.isLoading -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator()
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(bgColor)
+        ) {
+            when {
+                uiState.isLoading -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        CircularProgressIndicator()
+                    }
                 }
-            }
-            uiState.errorMessage != null -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(text = uiState.errorMessage ?: "Unknown error")
+                uiState.errorMessage != null -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(text = uiState.errorMessage ?: "Unknown error")
+                    }
                 }
-            }
-            currentEvent != null -> {
-                val scrollState = rememberScrollState()
+                currentEvent != null -> {
+                    val scrollState = rememberScrollState()
 
-                Column(
-                    modifier = Modifier
-                        .verticalScroll(scrollState)
-                        .padding(paddingValues)
-                        .padding(16.dp)
-                        .background(bgColor)
-                ) {
-                    Text(
-                        text = currentEvent.name,
+                    Column(
+                        modifier = Modifier
+                            .verticalScroll(scrollState)
+                            .padding(paddingValues)
+                            .padding(16.dp)
+                    ) {
+                        Text(
+                            text = currentEvent.name,
 //                        style = MaterialTheme.typography.headlineSmall.copy(
 //                            fontWeight = FontWeight.Medium
 //                        )
-                        fontSize = (fontSize + 6).sp,
-                        fontWeight = FontWeight.Medium
-                    )
+                            fontSize = (fontSize + 6).sp,
+                            fontWeight = FontWeight.Medium
+                        )
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                    Text(
-                        text = currentEvent.summary,
+                        Text(
+                            text = currentEvent.summary,
 //                        style = MaterialTheme.typography.titleMedium.copy(
 //                           fontWeight = FontWeight.Bold
 //                        )
-                        fontSize = (fontSize).sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                            fontSize = (fontSize).sp,
+                            fontWeight = FontWeight.Bold
+                        )
 
-                    Spacer(modifier = Modifier.height(16.dp))
+                        Spacer(modifier = Modifier.height(16.dp))
 
-                    val imageUrl = currentEvent.imageURL
+                        val imageUrl = currentEvent.imageURL
 
-                    if (imageUrl.isNotBlank()) {
-                        val context = LocalContext.current
-                        val isNetwork = isNetworkUrl(imageUrl)
+                        if (imageUrl.isNotBlank()) {
+                            val context = LocalContext.current
+                            val isNetwork = isNetworkUrl(imageUrl)
 
-                        if (isNetwork) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(context)
-                                    .data(imageUrl)
-                                    .crossfade(true)
-                                    .build(),
-                                placeholder = painterResource(id = android.R.drawable.ic_menu_gallery),
-                                error = painterResource(id = android.R.drawable.ic_menu_report_image),
-                                contentDescription = "Event Image",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp),
-                                contentScale = ContentScale.Crop
-                            )
-                        } else { 
-                            val imageResId = remember(imageUrl, context) {
-                                val id = context.resources.getIdentifier(imageUrl, "drawable", context.packageName)
-                                if (id != 0) {
-                                    id 
-                                } else {
-                                    android.R.drawable.ic_menu_report_image
+                            if (isNetwork) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(context)
+                                        .data(imageUrl)
+                                        .crossfade(true)
+                                        .build(),
+                                    placeholder = painterResource(id = android.R.drawable.ic_menu_gallery),
+                                    error = painterResource(id = android.R.drawable.ic_menu_report_image),
+                                    contentDescription = "Event Image",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(200.dp),
+                                    contentScale = ContentScale.Crop
+                                )
+                            } else { 
+                                val imageResId = remember(imageUrl, context) {
+                                    val id = context.resources.getIdentifier(imageUrl, "drawable", context.packageName)
+                                    if (id != 0) {
+                                        id 
+                                    } else {
+                                        android.R.drawable.ic_menu_report_image
+                                    }
                                 }
+                                Image(
+                                    painter = painterResource(id = imageResId),
+                                    contentDescription = "Event Image",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .height(200.dp),
+                                    contentScale = ContentScale.Crop
+                                )
                             }
-                            Image(
-                                painter = painterResource(id = imageResId),
-                                contentDescription = "Event Image",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
 
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text(
-                                text = currentEvent.imageContent,
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                Text(
+                                    text = currentEvent.imageContent,
 //                                style = MaterialTheme.typography.bodySmall.copy(
 //                                    fontStyle = FontStyle.Italic
 //                                ),
-                                fontSize = 13.sp,
-                                fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                                    fontSize = 13.sp,
+                                    fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(16.dp))
                         }
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
 
-                    Text(
-                        text = currentEvent.contents,
+                        Text(
+                            text = currentEvent.contents,
 //                        style = MaterialTheme.typography.bodyMedium
-                        fontSize = fontSize.sp
-                    )
+                            fontSize = fontSize.sp
+                        )
+                    }
                 }
-            }
-            else -> {
-                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(paddingValues),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text("No event data available.")
+                else -> {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(paddingValues),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("No event data available.")
+                    }
                 }
             }
         }
