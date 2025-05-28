@@ -77,13 +77,12 @@ fun TimelineScreenUI(
                 else -> {
                     Box(modifier = Modifier.fillMaxSize()) {
                         // Đường timelinee
-                        val lineThickness = 2.dp
-                        val lineStartX = (26.dp - lineThickness) / 2
+                        val lineStartX = 12.dp
                         Box(
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .padding(start = lineStartX)
-                                .width(lineThickness)
+                                .width(2.dp)
                                 .background(Color(0xFF000000))
                         )
 

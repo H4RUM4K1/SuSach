@@ -63,27 +63,28 @@ class SearchViewModel : ViewModel() {
         _results.value = sorted
     }
 
+    private fun filterResults(events: List<Event>, query: String, eraId: String?): List<Event> {
+        val normalizedQuery = query.lowercase()
+        val eventsFilteredByEra = if (eraId != null) {
+            events.filter { it.eraId == eraId }
+        } else {
+            events
+        }
+        return if (normalizedQuery.isNotEmpty()) {
+            eventsFilteredByEra.filter { event ->
+                event.name.lowercase().contains(normalizedQuery)
+            }
+        } else {
+            eventsFilteredByEra
+        }
+    }
+
     fun search(query: String) {
         currentQuery = query.trim() // Update current query
-        val normalizedQuery = currentQuery.lowercase()
 
         viewModelScope.launch {
             val allEvents = eventRepository.getAllEvents()
-
-            val eventsFilteredByEra = if (selectedEraId != null) {
-                allEvents.filter { it.eraId == selectedEraId }
-            } else {
-                allEvents
-            }
-
-            val finalResults = if (normalizedQuery.isNotEmpty()) {
-                eventsFilteredByEra.filter { event ->
-                    event.name.lowercase().contains(normalizedQuery) ||
-                            (event.description.lowercase().contains(normalizedQuery))
-                }
-            } else {
-                eventsFilteredByEra
-            }
+            val finalResults = filterResults(allEvents, currentQuery, selectedEraId)
             _results.value = finalResults
             sortResults()
         }

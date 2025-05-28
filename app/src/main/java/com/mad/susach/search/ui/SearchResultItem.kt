@@ -55,7 +55,6 @@ fun SearchResultItem(
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Text content first
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = event.name,
@@ -85,10 +84,9 @@ fun SearchResultItem(
                         .size(50.dp)
                         .clip(MaterialTheme.shapes.small),
                     contentScale = ContentScale.Crop,
-                    onError = { /* Handle error if needed */ },
-                    onSuccess = { /* Handle success if needed */ }
+
                 )
-            } else if (event.imageURL.isNotEmpty()) { // Local drawable resource
+            } else if (event.imageURL.isNotEmpty()) {
                 val context = LocalContext.current
                 val resourceId = remember(event.imageURL) {
                     context.resources.getIdentifier(event.imageURL, "drawable", context.packageName)
